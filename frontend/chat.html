@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — MindBot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">MindBot 🤖</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Hi! I'm MindBot 🤖</h1>
+      <p>Talk to me about how you're feeling</p>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="chat-box" id="chatBox">
+      <div class="chat-message bot">
+        <div class="chat-bubble bot-bubble">
+          Hey there! 🌱 I'm MindBot, your wellness companion. How are you feeling today? You can tell me anything!
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Row -->
+    <div class="chat-input-row">
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Type a message..."
+        onkeypress="if(event.key === 'Enter') sendMessage()"
+      />
+      <button class="btn-send" onclick="sendMessage()">Send</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

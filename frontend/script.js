@@ -1,0 +1,545 @@
+// ── Route Protection ──
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html"];
+const currentPage = window.location.pathname.split("/").pop();
+
+if (protectedPages.includes(currentPage)) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html";
+  }
+}
+const API = "http://localhost:5000";
+
+// ── Helpers ──
+function showError(id, message) {
+  const box = document.getElementById(id);
+  box.textContent = message;
+  box.style.display = "block";
+}
+
+function hideMessages() {
+  const error = document.getElementById("errorBox");
+  const success = document.getElementById("successBox");
+  if (error) error.style.display = "none";
+  if (success) success.style.display = "none";
+}
+
+function showSuccess(id, message) {
+  const box = document.getElementById(id);
+  box.textContent = message;
+  box.style.display = "block";
+}
+
+// ── Signup ──
+async function signup() {
+  hideMessages();
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!name || !email || !password) {
+    showError("errorBox", "Please fill in all fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    // Save token and user info
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    showSuccess("successBox", "Account created! Redirecting...");
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1500);
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server. Is it running?");
+  }
+}
+// ── Login ──
+async function login() {
+  hideMessages();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    showError("errorBox", "Please fill in all fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    // Save token and user info
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    showSuccess("successBox", "Login successful! Redirecting...");
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1500);
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server. Is it running?");
+  }
+}
+// ── Dashboard ──
+async function loadDashboard() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/user`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const user = data.user;
+    document.getElementById("userName").textContent = user.name;
+    document.getElementById("streak").textContent = user.streak;
+    document.getElementById("xp").textContent = user.xp;
+    document.getElementById("level").textContent = user.level;
+    document.getElementById("badgeEmoji").textContent = user.badge.emoji;
+    document.getElementById("badgeName").textContent = user.badge.name;
+
+  } catch (error) {
+    console.error("Dashboard error:", error);
+  }
+}
+
+// ── Logout ──
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+}
+
+// ── Run on page load ──
+if (window.location.pathname.includes("dashboard.html")) {
+  loadDashboard();
+}
+// ── Mood Tracker ──
+let selectedMood = null;
+
+function selectMood(mood, btn) {
+  selectedMood = mood;
+  document.querySelectorAll(".mood-btn").forEach((b) => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+async function logMood() {
+  hideMessages();
+
+  if (!selectedMood) {
+    showError("errorBox", "Please select a mood first!");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  const note = document.getElementById("moodNote").value;
+
+  try {
+    const res = await fetch(`${API}/api/mood`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ mood: selectedMood, note }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    showSuccess("successBox", `Mood logged! +10 XP 🎉 Total XP: ${data.stats.xp}`);
+    selectedMood = null;
+    document.querySelectorAll(".mood-btn").forEach((b) => b.classList.remove("selected"));
+    document.getElementById("moodNote").value = "";
+    loadMoodHistory();
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+async function loadMoodHistory() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/mood`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+    const container = document.getElementById("moodHistory");
+
+    if (data.moods.length === 0) {
+      container.innerHTML = `<p style="color: rgba(255,255,255,0.6); font-size: 14px;">No moods logged yet.</p>`;
+      return;
+    }
+
+    const moodEmojis = {
+      Happy: "😄",
+      Neutral: "😐",
+      Sad: "😢",
+      Angry: "😠",
+    };
+
+    container.innerHTML = data.moods.map((m) => `
+      <div class="history-item">
+        <span class="history-mood">${moodEmojis[m.mood] || "😊"} ${m.mood}</span>
+        <span class="history-date">${new Date(m.date).toLocaleDateString()}</span>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Mood history error:", error);
+  }
+}
+
+// Run on mood page load
+if (window.location.pathname.includes("mood.html")) {
+  loadMoodHistory();
+}
+// ── Habit Tracker ──
+async function addHabit() {
+  hideMessages();
+
+  const name = document.getElementById("habitName").value.trim();
+
+  if (!name) {
+    showError("errorBox", "Please enter a habit name.");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/habit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ name }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    document.getElementById("habitName").value = "";
+    showSuccess("successBox", "Habit added! ✅");
+    loadHabits();
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+async function completeHabit(id) {
+  hideMessages();
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/habit/${id}/complete`, {
+      method: "PATCH",
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    showSuccess("successBox", `${data.message} Total XP: ${data.stats.xp}`);
+    loadHabits();
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+async function deleteHabit(id) {
+  const token = localStorage.getItem("token");
+
+  try {
+    await fetch(`${API}/api/habit/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: token },
+    });
+    loadHabits();
+
+  } catch (error) {
+    console.error("Delete habit error:", error);
+  }
+}
+
+async function loadHabits() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/habit`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+    const container = document.getElementById("habitList");
+
+    if (data.habits.length === 0) {
+      container.innerHTML = `<p style="color: rgba(255,255,255,0.6); font-size: 14px;">No habits yet. Add one above!</p>`;
+      return;
+    }
+
+    container.innerHTML = data.habits.map((h) => `
+      <div class="habit-item ${h.completedToday ? "completed" : ""}">
+        <div class="habit-left">
+          <div>
+            <div class="habit-name">${h.name}</div>
+            <div class="habit-streak">🔥 ${h.streak} day streak</div>
+          </div>
+        </div>
+        ${h.completedToday
+          ? `<button class="btn-complete done">✅ Done</button>`
+          : `<button class="btn-complete" onclick="completeHabit('${h._id}')">Complete</button>`
+        }
+        <button class="btn-delete" onclick="deleteHabit('${h._id}')">🗑</button>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Load habits error:", error);
+  }
+}
+
+// Run on habit page load
+if (window.location.pathname.includes("habit.html")) {
+  loadHabits();
+}
+// ── Analytics ──
+async function loadAnalytics() {
+  const token = localStorage.getItem("token");
+
+  try {
+    // Load user stats
+    const userRes = await fetch(`${API}/api/user`, {
+      headers: { Authorization: token },
+    });
+    const userData = await userRes.json();
+    const user = userData.user;
+
+    document.getElementById("totalXP").textContent = user.xp;
+    document.getElementById("currentLevel").textContent = user.level;
+    document.getElementById("currentStreak").textContent = user.streak;
+    document.getElementById("analyticsEmoji").textContent = user.badge.emoji;
+    document.getElementById("analyticsBadge").textContent = user.badge.name;
+
+    // XP progress bar
+    const xpInCurrentLevel = user.xp % 50;
+    const percentage = (xpInCurrentLevel / 50) * 100;
+    document.getElementById("xpBarFill").style.width = percentage + "%";
+    document.getElementById("xpBarLabel").textContent =
+      `${xpInCurrentLevel} / 50 XP to Level ${user.level + 1}`;
+
+    // Load mood frequency
+    const moodRes = await fetch(`${API}/api/mood`, {
+      headers: { Authorization: token },
+    });
+    const moodData = await moodRes.json();
+    const frequency = moodData.frequency;
+
+    // Draw chart
+    const ctx = document.getElementById("moodChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: Object.keys(frequency),
+        datasets: [{
+          label: "Times logged",
+          data: Object.values(frequency),
+          backgroundColor: [
+            "rgba(255, 255, 255, 0.6)",
+            "rgba(255, 255, 255, 0.4)",
+            "rgba(255, 255, 255, 0.3)",
+            "rgba(255, 255, 255, 0.2)",
+          ],
+          borderColor: "rgba(255, 255, 255, 0.8)",
+          borderWidth: 1,
+          borderRadius: 8,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          x: {
+            ticks: { color: "white" },
+            grid: { color: "rgba(255,255,255,0.1)" },
+          },
+          y: {
+            ticks: { color: "white", stepSize: 1 },
+            grid: { color: "rgba(255,255,255,0.1)" },
+          },
+        },
+      },
+    });
+
+  } catch (error) {
+    console.error("Analytics error:", error);
+  }
+}
+
+// Run on analytics page load
+if (window.location.pathname.includes("analytics.html")) {
+  loadAnalytics();
+}
+// ── Chatbot ──
+const botResponses = {
+  sad: [
+    "I'm really sorry you're feeling sad 💙 It's okay to feel this way. Take it one moment at a time.",
+    "Sadness is a valid emotion. Try taking a few deep breaths and be kind to yourself today 🌸",
+    "I hear you. Sometimes writing down your feelings can help. You're not alone 💜",
+  ],
+  stress: [
+    "Stress can feel overwhelming. Try the 4-7-8 breathing technique: breathe in for 4 seconds, hold for 7, out for 8 🌬️",
+    "When stress hits, take a 5 minute walk outside. Fresh air does wonders 🌿",
+    "You're doing better than you think. Break your tasks into small steps and tackle one at a time 💪",
+  ],
+  angry: [
+    "It's okay to feel angry. Try counting to 10 slowly before reacting 🧘",
+    "Anger is energy — channel it into something positive like a workout or journaling 💪",
+    "Take a deep breath. Step away for a moment and give yourself space to cool down 🌬️",
+  ],
+  happy: [
+    "That's amazing! Happiness is contagious 😄 Keep that energy going!",
+    "Love to hear that! Celebrate the good moments — you deserve it 🎉",
+    "Wonderful! Try to share that happiness with someone around you today 🌟",
+  ],
+  anxious: [
+    "Anxiety can be tough. Try grounding yourself — name 5 things you can see right now 👀",
+    "Take slow deep breaths. You are safe right now 💙 This feeling will pass.",
+    "When anxiety strikes, focus on what you can control and let go of what you can't 🌿",
+  ],
+  lonely: [
+    "Loneliness is hard. Remember you are never truly alone — I'm here for you 💜",
+    "Try reaching out to one person today, even just a text. Connection heals 🌸",
+    "You matter more than you know. Consider joining a community or group activity 🌟",
+  ],
+  tired: [
+    "Rest is productive too! Make sure you're getting enough sleep tonight 😴",
+    "Listen to your body — it might be asking for a break. Be gentle with yourself 🌿",
+    "Try a short 10 minute nap or meditation. Even brief rest can recharge you ⚡",
+  ],
+  default: [
+    "Thank you for sharing that with me 🌱 I'm here to listen. Tell me more!",
+    "You're taking a great step by talking about how you feel. Keep going 💪",
+    "I hear you. Remember — every small step forward counts on your wellness journey 🌿",
+    "That's interesting! How does that make you feel? 💙",
+  ],
+};
+
+function getBotResponse(message) {
+  const msg = message.toLowerCase();
+  if (msg.includes("sad") || msg.includes("unhappy") || msg.includes("depressed") || msg.includes("cry")) {
+    return botResponses.sad[Math.floor(Math.random() * botResponses.sad.length)];
+  }
+  if (msg.includes("stress") || msg.includes("overwhelm") || msg.includes("pressure") || msg.includes("worried")) {
+    return botResponses.stress[Math.floor(Math.random() * botResponses.stress.length)];
+  }
+  if (msg.includes("angry") || msg.includes("anger") || msg.includes("mad") || msg.includes("frustrated")) {
+    return botResponses.angry[Math.floor(Math.random() * botResponses.angry.length)];
+  }
+  if (msg.includes("happy") || msg.includes("great") || msg.includes("good") || msg.includes("excited")) {
+    return botResponses.happy[Math.floor(Math.random() * botResponses.happy.length)];
+  }
+  if (msg.includes("anxious") || msg.includes("anxiety") || msg.includes("nervous") || msg.includes("panic")) {
+    return botResponses.anxious[Math.floor(Math.random() * botResponses.anxious.length)];
+  }
+  if (msg.includes("lonely") || msg.includes("alone") || msg.includes("isolated")) {
+    return botResponses.lonely[Math.floor(Math.random() * botResponses.lonely.length)];
+  }
+  if (msg.includes("tired") || msg.includes("exhausted") || msg.includes("sleepy") || msg.includes("fatigue")) {
+    return botResponses.tired[Math.floor(Math.random() * botResponses.tired.length)];
+  }
+  return botResponses.default[Math.floor(Math.random() * botResponses.default.length)];
+}
+
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  const chatBox = document.getElementById("chatBox");
+
+  // Add user message
+  chatBox.innerHTML += `
+    <div class="chat-message user">
+      <div class="chat-bubble user-bubble">${message}</div>
+    </div>
+  `;
+
+  input.value = "";
+
+  // Scroll to bottom
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // Bot typing delay
+  setTimeout(() => {
+    const response = getBotResponse(message);
+    chatBox.innerHTML += `
+      <div class="chat-message bot">
+        <div class="chat-bubble bot-bubble">${response}</div>
+      </div>
+    `;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 800);
+}

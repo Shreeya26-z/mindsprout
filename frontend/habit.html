@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Habit Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Habit Tracker</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Your Habits 📅</h1>
+      <p>Complete habits and earn +5 XP each</p>
+    </div>
+
+    <!-- Add Habit -->
+    <div class="add-habit-row">
+      <input type="text" id="habitName" placeholder="Enter a new habit..."/>
+      <button class="btn-add" onclick="addHabit()">Add</button>
+    </div>
+
+    <!-- Messages -->
+    <div class="error-box" id="errorBox"></div>
+    <div class="success-box" id="successBox"></div>
+
+    <!-- Habit List -->
+    <div class="section-title">Today's Habits</div>
+    <div id="habitList" class="habit-list">
+      <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Loading...</p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

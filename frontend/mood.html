@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Mood Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Mood Tracker</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>How are you feeling? 😊</h1>
+      <p>Log your mood and earn +10 XP</p>
+    </div>
+
+    <!-- Mood Buttons -->
+    <div class="mood-grid">
+      <button class="mood-btn" onclick="selectMood('Happy', this)">
+        <span class="mood-btn-emoji">😄</span>
+        <span class="mood-btn-label">Happy</span>
+      </button>
+      <button class="mood-btn" onclick="selectMood('Neutral', this)">
+        <span class="mood-btn-emoji">😐</span>
+        <span class="mood-btn-label">Neutral</span>
+      </button>
+      <button class="mood-btn" onclick="selectMood('Sad', this)">
+        <span class="mood-btn-emoji">😢</span>
+        <span class="mood-btn-label">Sad</span>
+      </button>
+      <button class="mood-btn" onclick="selectMood('Angry', this)">
+        <span class="mood-btn-emoji">😠</span>
+        <span class="mood-btn-label">Angry</span>
+      </button>
+    </div>
+
+    <!-- Note -->
+    <div class="form-group" style="margin-top: 24px;">
+      <label>Add a note (optional)</label>
+      <textarea id="moodNote" placeholder="What's on your mind?" rows="3"></textarea>
+    </div>
+
+    <!-- Messages -->
+    <div class="error-box" id="errorBox"></div>
+    <div class="success-box" id="successBox"></div>
+
+    <!-- Submit -->
+    <button class="btn-primary" onclick="logMood()">Log Mood +10 XP</button>
+
+    <!-- History -->
+    <div class="section-title">Recent Moods</div>
+    <div id="moodHistory" class="history-list">
+      <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Loading...</p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

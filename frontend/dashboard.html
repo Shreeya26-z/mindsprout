@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="header-left">
+        <span class="logo-small">🌱</span>
+        <span class="app-name">MindSprout</span>
+      </div>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Welcome -->
+    <div class="welcome-section">
+      <h1>Hello, <span id="userName">there</span> 👋</h1>
+      <p>How are you feeling today?</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-emoji">🔥</div>
+        <div class="stat-value" id="streak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">⭐</div>
+        <div class="stat-value" id="xp">0</div>
+        <div class="stat-label">XP Points</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">🎯</div>
+        <div class="stat-value" id="level">1</div>
+        <div class="stat-label">Level</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji" id="badgeEmoji">🌿</div>
+        <div class="stat-value" id="badgeName">Seedling</div>
+        <div class="stat-label">Badge</div>
+      </div>
+    </div>
+
+    <!-- Nav Cards -->
+    <div class="nav-cards">
+      <div class="nav-card" onclick="window.location.href='mood.html'">
+        <div class="nav-card-emoji">😊</div>
+        <div class="nav-card-title">Mood Tracker</div>
+        <div class="nav-card-subtitle">Log how you feel</div>
+      </div>
+      <div class="nav-card" onclick="window.location.href='habit.html'">
+        <div class="nav-card-emoji">📅</div>
+        <div class="nav-card-title">Habit Tracker</div>
+        <div class="nav-card-subtitle">Build daily habits</div>
+      </div>
+      <div class="nav-card" onclick="window.location.href='analytics.html'">
+        <div class="nav-card-emoji">📈</div>
+        <div class="nav-card-title">Analytics</div>
+        <div class="nav-card-subtitle">View your progress</div>
+      </div>
+      <div class="nav-card" onclick="window.location.href='chat.html'">
+        <div class="nav-card-emoji">🤖</div>
+        <div class="nav-card-title">Chatbot</div>
+        <div class="nav-card-subtitle">Talk to MindBot</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

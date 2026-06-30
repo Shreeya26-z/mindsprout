@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Analytics</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Your Progress 📈</h1>
+      <p>See how your wellness journey is going</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row" id="analyticsStats">
+      <div class="stat-card">
+        <div class="stat-emoji">⭐</div>
+        <div class="stat-value" id="totalXP">0</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">🎯</div>
+        <div class="stat-value" id="currentLevel">1</div>
+        <div class="stat-label">Level</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">🔥</div>
+        <div class="stat-value" id="currentStreak">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji" id="analyticsEmoji">🌿</div>
+        <div class="stat-value" id="analyticsBadge">Seedling</div>
+        <div class="stat-label">Badge</div>
+      </div>
+    </div>
+
+    <!-- Mood Chart -->
+    <div class="chart-card">
+      <div class="chart-title">Mood Frequency</div>
+      <canvas id="moodChart"></canvas>
+    </div>
+
+    <!-- XP Progress -->
+    <div class="chart-card">
+      <div class="chart-title">XP to Next Level</div>
+      <div class="xp-bar-container">
+        <div class="xp-bar-fill" id="xpBarFill"></div>
+      </div>
+      <div class="xp-bar-label" id="xpBarLabel">0 / 50 XP</div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
