@@ -8,7 +8,7 @@ if (protectedPages.includes(currentPage)) {
     window.location.href = "login.html";
   }
 }
-const API = "http://localhost:5000";
+const API = "https://mindsprout-msjx.onrender.com";
 
 // ── Helpers ──
 function showError(id, message) {
