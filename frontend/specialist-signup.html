@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Specialist Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+
+      <div class="logo">🩺</div>
+      <h1>Specialist Sign Up</h1>
+      <p class="subtitle">Join MindSprout as a wellness specialist</p>
+
+      <div class="error-box" id="errorBox"></div>
+      <div class="success-box" id="successBox"></div>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="Dr. Jane Smith"/>
+      </div>
+
+      <div class="form-group">
+        <label>Specialty</label>
+        <input type="text" id="specialty" placeholder="e.g. Anxiety & Stress Management"/>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="Enter your email"/>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Min 6 characters"/>
+      </div>
+
+      <button class="btn-primary" onclick="specialistSignup()">Create Specialist Account</button>
+
+      <p class="switch-auth">
+        Already have an account? <a href="specialist-login.html">Log in</a>
+      </p>
+      <p class="switch-auth">
+        <a href="signup.html">I'm a user, not a specialist</a>
+      </p>
+
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

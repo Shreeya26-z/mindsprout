@@ -1,14 +1,26 @@
+const API = "http://localhost:5000";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html"];
+const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
-
 if (protectedPages.includes(currentPage)) {
   const token = localStorage.getItem("token");
   if (!token) {
     window.location.href = "login.html";
   }
 }
-const API = "https://mindsprout-msjx.onrender.com";
+if (specialistProtectedPages.includes(currentPage)) {
+  const token = localStorage.getItem("specialistToken");
+  if (!token) {
+    window.location.href = "specialist-login.html";
+  }
+}
+if (specialistProtectedPages.includes(currentPage)) {
+  const token = localStorage.getItem("specialistToken");
+  if (!token) {
+    window.location.href = "specialist-login.html";
+  }
+}
 
 // ── Helpers ──
 function showError(id, message) {
@@ -542,4 +554,414 @@ function sendMessage() {
     `;
     chatBox.scrollTop = chatBox.scrollHeight;
   }, 800);
+}
+// ── Specialist Auth ──
+async function specialistSignup() {
+  hideMessages();
+
+  const name = document.getElementById("name").value.trim();
+  const specialty = document.getElementById("specialty").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!name || !specialty || !email || !password) {
+    showError("errorBox", "Please fill in all fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/specialist-auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, specialty, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    localStorage.setItem("specialistToken", data.token);
+    localStorage.setItem("specialist", JSON.stringify(data.specialist));
+
+    showSuccess("successBox", "Account created! Redirecting...");
+    setTimeout(() => {
+      window.location.href = "specialist-dashboard.html";
+    }, 1500);
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+async function specialistLogin() {
+  hideMessages();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    showError("errorBox", "Please fill in all fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/specialist-auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    localStorage.setItem("specialistToken", data.token);
+    localStorage.setItem("specialist", JSON.stringify(data.specialist));
+
+    showSuccess("successBox", "Login successful! Redirecting...");
+    setTimeout(() => {
+      window.location.href = "specialist-dashboard.html";
+    }, 1500);
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+// ── Specialist Dashboard ──
+async function loadSpecialistDashboard() {
+  const token = localStorage.getItem("specialistToken");
+
+  if (!token) {
+    window.location.href = "specialist-login.html";
+    return;
+  }
+
+  const specialist = JSON.parse(localStorage.getItem("specialist"));
+
+  document.getElementById("specialistName").textContent = specialist.name;
+  document.getElementById("specialistSpecialty").textContent = specialist.specialty;
+
+  try {
+    const res = await fetch(`${API}/api/specialist/me`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      window.location.href = "specialist-login.html";
+      return;
+    }
+
+    const statusEl = document.getElementById("availabilityStatus");
+    statusEl.textContent = data.specialist.isAvailable ? "🟢 Available" : "🔴 Unavailable";
+    // Load specialist's bookings/conversations
+    const bookingRes = await fetch(`${API}/api/booking/specialist`, {
+      headers: { Authorization: token },
+    });
+    const bookingData = await bookingRes.json();
+    const container = document.getElementById("conversationsList");
+
+    if (!bookingData.bookings || bookingData.bookings.length === 0) {
+      container.innerHTML = `<p style="color:rgba(255,255,255,0.6);font-size:14px;">No conversations yet.</p>`;
+    } else {
+      container.innerHTML = bookingData.bookings.map(b => `
+        <div class="habit-item">
+          <div class="habit-left">
+            <div>
+              <div class="habit-name">👤 ${b.userId?.name || "User"}</div>
+              <div class="habit-streak">${b.userId?.email || ""} • ${b.status}</div>
+            </div>
+          </div>
+          <button class="btn-complete" onclick="window.location.href='live-chat.html?room=${b.roomId}'">
+            💬 Chat
+          </button>
+        </div>
+      `).join("");
+    }
+  } catch (error) {
+    console.error("Specialist dashboard error:", error);
+  }
+}
+
+async function toggleAvailability() {
+  const token = localStorage.getItem("specialistToken");
+
+  try {
+    const res = await fetch(`${API}/api/specialist/toggle-availability`, {
+      method: "PATCH",
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+
+    const statusEl = document.getElementById("availabilityStatus");
+    statusEl.textContent = data.isAvailable ? "🟢 Available" : "🔴 Unavailable";
+
+  } catch (error) {
+    console.error("Toggle availability error:", error);
+  }
+}
+
+function specialistLogout() {
+  localStorage.removeItem("specialistToken");
+  localStorage.removeItem("specialist");
+  window.location.href = "specialist-login.html";
+}
+
+if (window.location.pathname.includes("specialist-dashboard.html")) {
+  loadSpecialistDashboard();
+}
+// ── Specialists Page ──
+let allSpecialists = [];
+
+async function loadSpecialists() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/specialist`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+    allSpecialists = data.specialists || [];
+    renderSpecialists(allSpecialists);
+
+  } catch (error) {
+    console.error("Load specialists error:", error);
+    document.getElementById("specialistsList").innerHTML =
+      `<p style="color:rgba(255,255,255,0.6);font-size:14px;">Could not load specialists.</p>`;
+  }
+}
+
+function filterSpecialists(type, btn) {
+  document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+
+  let filtered = allSpecialists;
+
+  if (type === "available") {
+    filtered = allSpecialists.filter(s => s.isAvailable);
+  } else if (type === "rated") {
+    filtered = [...allSpecialists].sort((a, b) => b.rating - a.rating);
+  }
+
+  renderSpecialists(filtered);
+}
+
+function renderSpecialists(specialists) {
+  const container = document.getElementById("specialistsList");
+
+  if (specialists.length === 0) {
+    container.innerHTML = `<p style="color:rgba(255,255,255,0.6);font-size:14px;">No specialists found.</p>`;
+    return;
+  }
+
+  container.innerHTML = specialists.map(s => `
+    <div class="specialist-card">
+      <div class="specialist-top">
+        <div class="specialist-avatar">${s.initials || "DR"}</div>
+        <div class="specialist-info">
+          <div class="specialist-name">${s.name}</div>
+          <div class="specialist-specialty">${s.specialty}</div>
+          <div class="specialist-rating">⭐ ${s.rating} (${s.reviewCount} reviews)</div>
+        </div>
+        <span class="specialist-badge ${s.isAvailable ? "badge-available" : "badge-unavailable"}">
+          ${s.isAvailable ? "Available" : "Unavailable"}
+        </span>
+      </div>
+      <div class="specialist-actions">
+        <button class="btn-chat-specialist" onclick="bookAndChat('${s._id}')">
+          💬 Chat
+        </button>
+        <button class="btn-book-specialist" onclick="bookSpecialist('${s._id}')"
+          ${!s.isAvailable ? "disabled" : ""}>
+          📅 Book
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function bookSpecialist(specialistId) {
+  hideMessages();
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/booking`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ specialistId }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    showSuccess("successBox", `${data.message} Redirecting to chat...`);
+    setTimeout(() => {
+      window.location.href = `live-chat.html?room=${data.roomId}&name=${encodeURIComponent(document.querySelector('.specialist-name')?.textContent || 'Specialist')}`;
+    }, 1500);
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+async function bookAndChat(specialistId) {
+  hideMessages();
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/booking`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ specialistId }),
+    });
+
+    const data = await res.json();
+
+    // Whether new booking or existing, we get a roomId
+    if (data.roomId) {
+      window.location.href = `live-chat.html?room=${data.roomId}`;
+      return;
+    }
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+    }
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+if (window.location.pathname.includes("specialists.html")) {
+  loadSpecialists();
+}
+// ── Live Chat (Socket.io) ──
+let socket = null;
+let currentRoomId = null;
+let currentSenderName = null;
+let currentSenderId = null;
+let isSpecialist = false;
+
+function initLiveChat() {
+  // Get room from URL params
+  const params = new URLSearchParams(window.location.search);
+  currentRoomId = params.get("room");
+
+  if (!currentRoomId) {
+    alert("No chat room specified.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // Detect if specialist or user
+  const specialistToken = localStorage.getItem("specialistToken");
+  const userToken = localStorage.getItem("token");
+
+  if (specialistToken) {
+    isSpecialist = true;
+    const specialist = JSON.parse(localStorage.getItem("specialist"));
+    currentSenderName = specialist.name;
+    currentSenderId = specialist.id;
+    document.getElementById("chatTitle").textContent = "Session Chat 🩺";
+  } else if (userToken) {
+    isSpecialist = false;
+    const user = JSON.parse(localStorage.getItem("user"));
+    currentSenderName = user ? user.name : "User";
+    currentSenderId = user ? user.id : "user";
+    document.getElementById("chatTitle").textContent = "Session Chat 🌱";
+  } else {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Connect to Socket.io
+  socket = io(API);
+
+  // Join the room
+  socket.emit("join_room", currentRoomId);
+
+  // Listen for incoming messages
+  socket.on("receive_message", (data) => {
+    displayMessage(data);
+  });
+
+  socket.on("connect", () => {
+    console.log("Connected to Socket.io ✅");
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Disconnected from Socket.io");
+  });
+}
+
+function displayMessage(data) {
+  const chatBox = document.getElementById("chatBox");
+  const isMe = data.senderId === currentSenderId;
+
+  chatBox.innerHTML += `
+    <div class="chat-message ${isMe ? "user" : "bot"}">
+      <div class="chat-bubble ${isMe ? "user-bubble" : "bot-bubble"}">
+        <div style="font-size:11px;opacity:0.7;margin-bottom:4px;">
+          ${isMe ? "You" : data.senderName}
+        </div>
+        ${data.message}
+      </div>
+    </div>
+  `;
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function sendLiveMessage() {
+  const input = document.getElementById("chatInput");
+  const message = input.value.trim();
+
+  if (!message || !socket || !currentRoomId) return;
+
+  const data = {
+    roomId: currentRoomId,
+    message,
+    senderName: currentSenderName,
+    senderId: currentSenderId,
+    timestamp: new Date().toISOString(),
+  };
+
+  socket.emit("send_message", data);
+  input.value = "";
+}
+
+function goBack() {
+  if (isSpecialist) {
+    window.location.href = "specialist-dashboard.html";
+  } else {
+    window.location.href = "specialists.html";
+  }
+}
+
+if (window.location.pathname.includes("live-chat.html")) {
+  initLiveChat();
 }

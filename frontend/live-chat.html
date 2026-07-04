@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Live Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <span class="app-name" id="chatTitle">Live Chat</span>
+      <div class="online-dot">🟢 Live</div>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="chat-box" id="chatBox">
+      <div class="chat-message bot">
+        <div class="chat-bubble bot-bubble">
+          Welcome to your session! Messages are live 🌱
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Row -->
+    <div class="chat-input-row">
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Type a message..."
+        onkeypress="if(event.key === 'Enter') sendLiveMessage()"
+      />
+      <button class="btn-send" onclick="sendLiveMessage()">Send</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
