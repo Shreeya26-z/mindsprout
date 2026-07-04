@@ -1,4 +1,4 @@
-const API = "http://localhost:5000";
+const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
 const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
