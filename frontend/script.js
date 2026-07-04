@@ -920,7 +920,22 @@ function initLiveChat() {
 
 function displayMessage(data) {
   const chatBox = document.getElementById("chatBox");
-  const isMe = data.senderId === currentSenderId;
+  const isMe = String(data.senderId) === String(currentSenderId);
+
+  const div = document.createElement("div");
+  div.className = `chat-message ${isMe ? "user" : "bot"}`;
+  div.innerHTML = `
+    <div class="chat-bubble ${isMe ? "user-bubble" : "bot-bubble"}">
+      <div style="font-size:11px;opacity:0.7;margin-bottom:4px;">
+        ${isMe ? "You" : data.senderName}
+      </div>
+      ${data.message}
+    </div>
+  `;
+
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
 
   chatBox.innerHTML += `
     <div class="chat-message ${isMe ? "user" : "bot"}">
