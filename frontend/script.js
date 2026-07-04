@@ -930,6 +930,12 @@ function displayMessage(data) {
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+ function sendLiveMessage() {
+  const input = document.getElementById("chatInput");
+  const message = input.value.trim();
+
+  if (!message || !socket || !currentRoomId) return;
+
   const data = {
     roomId: currentRoomId,
     message,
@@ -937,6 +943,10 @@ function displayMessage(data) {
     senderId: currentSenderId,
     timestamp: new Date().toISOString(),
   };
+
+  socket.emit("send_message", data);
+  input.value = "";
+}
 
   socket.emit("send_message", data);
   input.value = "";
