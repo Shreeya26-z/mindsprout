@@ -867,7 +867,6 @@ let currentSenderId = null;
 let isSpecialist = false;
 
 function initLiveChat() {
-  // Get room from URL params
   const params = new URLSearchParams(window.location.search);
   currentRoomId = params.get("room");
 
@@ -877,7 +876,6 @@ function initLiveChat() {
     return;
   }
 
-  // Detect if specialist or user
   const specialistToken = localStorage.getItem("specialistToken");
   const userToken = localStorage.getItem("token");
 
@@ -898,13 +896,10 @@ function initLiveChat() {
     return;
   }
 
-  // Connect to Socket.io
   socket = io(API);
 
-  // Join the room
   socket.emit("join_room", currentRoomId);
 
-  // Listen for incoming messages
   socket.on("receive_message", (data) => {
     displayMessage(data);
   });
@@ -912,6 +907,12 @@ function initLiveChat() {
   socket.on("connect", () => {
     console.log("Connected to Socket.io ✅");
   });
+
+  socket.on("disconnect", () => {
+    console.log("Disconnected from Socket.io");
+  });
+}
+
 function displayMessage(data) {
   const chatBox = document.getElementById("chatBox");
   const isMe = String(data.senderId) === String(currentSenderId);
@@ -930,7 +931,8 @@ function displayMessage(data) {
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
- function sendLiveMessage() {
+
+function sendLiveMessage() {
   const input = document.getElementById("chatInput");
   const message = input.value.trim();
 
@@ -943,10 +945,6 @@ function displayMessage(data) {
     senderId: currentSenderId,
     timestamp: new Date().toISOString(),
   };
-
-  socket.emit("send_message", data);
-  input.value = "";
-}
 
   socket.emit("send_message", data);
   input.value = "";
