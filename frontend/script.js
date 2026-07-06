@@ -1,6 +1,6 @@
 const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
 if (protectedPages.includes(currentPage)) {
@@ -960,4 +960,136 @@ function goBack() {
 
 if (window.location.pathname.includes("live-chat.html")) {
   initLiveChat();
+}
+// ── Journal ──
+const emotionEmojis = {
+  happy: "😊 Happy",
+  sad: "😢 Sad",
+  anxious: "😰 Anxious",
+  angry: "😠 Angry",
+  tired: "😴 Tired",
+  hopeful: "🌟 Hopeful",
+  grateful: "🙏 Grateful",
+  neutral: "😐 Neutral",
+};
+
+async function loadJournalPrompt() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/journal/prompt`, {
+      headers: { Authorization: token },
+    });
+    const data = await res.json();
+    document.getElementById("todayPrompt").textContent = data.prompt;
+  } catch (error) {
+    document.getElementById("todayPrompt").textContent =
+      "What is one thing you're grateful for today?";
+  }
+}
+
+async function saveJournalEntry() {
+  hideMessages();
+
+  const token = localStorage.getItem("token");
+  const entry = document.getElementById("journalEntry").value.trim();
+  const prompt = document.getElementById("todayPrompt").textContent;
+
+  if (!entry || entry.length < 10) {
+    showError("errorBox", "Please write at least a sentence before saving.");
+    return;
+  }
+
+  const btn = document.querySelector(".btn-primary");
+  btn.textContent = "Analyzing... 🌱";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API}/api/journal`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ prompt, entry }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      btn.textContent = "Save & Reflect 🌱";
+      btn.disabled = false;
+      return;
+    }
+
+    // Show analysis
+    const analysisCard = document.getElementById("analysisCard");
+    document.getElementById("analysisText").textContent = data.aiAnalysis;
+    document.getElementById("emotionDetected").textContent =
+      emotionEmojis[data.emotion] || "😐 Neutral";
+    analysisCard.style.display = "block";
+
+    showSuccess("successBox", "Journal entry saved! 🌱");
+
+    document.getElementById("journalEntry").value = "";
+    document.getElementById("wordCount").textContent = "0";
+    btn.textContent = "Save & Reflect 🌱";
+    btn.disabled = false;
+
+    loadJournalHistory();
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+    btn.textContent = "Save & Reflect 🌱";
+    btn.disabled = false;
+  }
+}
+
+async function loadJournalHistory() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/journal`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+    const container = document.getElementById("journalHistory");
+
+    if (!data.entries || data.entries.length === 0) {
+      container.innerHTML = `<p style="color:rgba(255,255,255,0.6);font-size:14px;">No entries yet. Write your first one above!</p>`;
+      return;
+    }
+
+    container.innerHTML = data.entries.map(e => `
+      <div class="journal-history-item">
+        <div class="journal-history-date">
+          ${new Date(e.date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+        </div>
+        <div class="journal-history-prompt">"${e.prompt}"</div>
+        <div class="journal-history-entry">${e.entry}</div>
+        <span class="journal-emotion-badge">${emotionEmojis[e.mood] || "😐 Neutral"}</span>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Journal history error:", error);
+  }
+}
+
+// Word counter
+if (window.location.pathname.includes("journal.html")) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const textarea = document.getElementById("journalEntry");
+    if (textarea) {
+      textarea.addEventListener("input", () => {
+        const words = textarea.value.trim().split(/\s+/).filter(w => w).length;
+        document.getElementById("wordCount").textContent = words;
+      });
+    }
+  });
+
+  loadJournalPrompt();
+  loadJournalHistory();
 }
