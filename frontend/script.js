@@ -1,6 +1,6 @@
 const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
 if (protectedPages.includes(currentPage)) {
@@ -1092,4 +1092,169 @@ if (window.location.pathname.includes("journal.html")) {
 
   loadJournalPrompt();
   loadJournalHistory();
+}
+// ── Guided Meditation ──
+const meditations = {
+  beginner1: {
+    title: "Breathing Basics",
+    emoji: "🌬️",
+    duration: "5 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  beginner2: {
+    title: "Morning Calm",
+    emoji: "🌿",
+    duration: "7 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  },
+  stress1: {
+    title: "Ocean Breath",
+    emoji: "🌊",
+    duration: "10 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  },
+  stress2: {
+    title: "Let It Go",
+    emoji: "☁️",
+    duration: "8 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  },
+  sleep1: {
+    title: "Deep Sleep Journey",
+    emoji: "🌙",
+    duration: "15 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  },
+  sleep2: {
+    title: "Starlight Relaxation",
+    emoji: "⭐",
+    duration: "12 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  },
+  focus1: {
+    title: "Clear Mind",
+    emoji: "🎯",
+    duration: "10 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  },
+  focus2: {
+    title: "Deep Focus",
+    emoji: "💡",
+    duration: "20 min",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+  },
+};
+
+let currentAudio = null;
+let currentMeditationId = null;
+let isPlaying = false;
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function playMeditation(el, id) {
+  const meditation = meditations[id];
+  if (!meditation) return;
+
+  // Stop current audio
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+
+  // Reset all play buttons
+  document.querySelectorAll(".meditation-play-btn").forEach(b => b.textContent = "▶");
+  document.querySelectorAll(".meditation-item").forEach(i => i.classList.remove("playing"));
+
+  // Set current
+  currentMeditationId = id;
+
+  // Show player card
+  const playerCard = document.getElementById("playerCard");
+  playerCard.style.display = "block";
+  document.getElementById("playerEmoji").textContent = meditation.emoji;
+  document.getElementById("playerTitle").textContent = meditation.title;
+  document.getElementById("playerDuration").textContent = meditation.duration;
+
+  // Create audio
+  currentAudio = new Audio(meditation.url);
+  currentAudio.volume = document.getElementById("volumeSlider").value;
+
+  // Update progress
+  currentAudio.addEventListener("timeupdate", () => {
+    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+    document.getElementById("progressFill").style.width = progress + "%";
+    document.getElementById("currentTime").textContent = formatTime(currentAudio.currentTime);
+    document.getElementById("totalTime").textContent = formatTime(currentAudio.duration || 0);
+  });
+
+  currentAudio.addEventListener("ended", () => {
+    isPlaying = false;
+    document.getElementById("playPauseBtn").textContent = "▶";
+    document.getElementById("progressFill").style.width = "0%";
+    el.querySelector(".meditation-play-btn").textContent = "▶";
+    el.classList.remove("playing");
+  });
+
+  // Play
+  currentAudio.play();
+  isPlaying = true;
+  document.getElementById("playPauseBtn").textContent = "⏸";
+  el.querySelector(".meditation-play-btn").textContent = "⏸";
+  el.classList.add("playing");
+
+  // Scroll to player
+  playerCard.scrollIntoView({ behavior: "smooth" });
+}
+
+function togglePlayPause() {
+  if (!currentAudio) return;
+
+  if (isPlaying) {
+    currentAudio.pause();
+    isPlaying = false;
+    document.getElementById("playPauseBtn").textContent = "▶";
+    if (currentMeditationId) {
+      const btn = document.getElementById(`btn-${currentMeditationId}`);
+      if (btn) btn.textContent = "▶";
+    }
+  } else {
+    currentAudio.play();
+    isPlaying = true;
+    document.getElementById("playPauseBtn").textContent = "⏸";
+    if (currentMeditationId) {
+      const btn = document.getElementById(`btn-${currentMeditationId}`);
+      if (btn) btn.textContent = "⏸";
+    }
+  }
+}
+
+function rewindAudio() {
+  if (currentAudio) {
+    currentAudio.currentTime = Math.max(0, currentAudio.currentTime - 10);
+  }
+}
+
+function forwardAudio() {
+  if (currentAudio) {
+    currentAudio.currentTime = Math.min(currentAudio.duration, currentAudio.currentTime + 10);
+  }
+}
+
+function seekAudio(event) {
+  if (!currentAudio) return;
+  const bar = event.currentTarget;
+  const rect = bar.getBoundingClientRect();
+  const clickX = event.clientX - rect.left;
+  const percent = clickX / rect.width;
+  currentAudio.currentTime = percent * currentAudio.duration;
+}
+
+function changeVolume(value) {
+  if (currentAudio) {
+    currentAudio.volume = value;
+  }
 }

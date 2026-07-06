@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Guided Meditation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Guided Meditation</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Find Your Calm 🧘</h1>
+      <p>Choose a meditation session and breathe</p>
+    </div>
+
+    <!-- Now Playing Card -->
+    <div class="player-card" id="playerCard" style="display:none;">
+      <div class="player-emoji" id="playerEmoji">🧘</div>
+      <div class="player-title" id="playerTitle">Select a session</div>
+      <div class="player-duration" id="playerDuration">0:00</div>
+
+      <!-- Progress Bar -->
+      <div class="player-progress-bar" onclick="seekAudio(event)">
+        <div class="player-progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- Time -->
+      <div class="player-time-row">
+        <span id="currentTime">0:00</span>
+        <span id="totalTime">0:00</span>
+      </div>
+
+      <!-- Controls -->
+      <div class="player-controls">
+        <button class="player-btn" onclick="rewindAudio()">⏮</button>
+        <button class="player-btn-main" id="playPauseBtn" onclick="togglePlayPause()">▶</button>
+        <button class="player-btn" onclick="forwardAudio()">⏭</button>
+      </div>
+
+      <!-- Volume -->
+      <div class="volume-row">
+        <span>🔈</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.8"
+          oninput="changeVolume(this.value)" class="volume-slider"/>
+        <span>🔊</span>
+      </div>
+    </div>
+
+    <!-- Meditation Categories -->
+    <div class="section-title">Choose a Session</div>
+
+    <!-- Beginner -->
+    <div class="meditation-category">Beginner</div>
+    <div class="meditation-list">
+      <div class="meditation-item" onclick="playMeditation(this, 'beginner1')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">🌬️</div>
+          <div>
+            <div class="meditation-item-title">Breathing Basics</div>
+            <div class="meditation-item-meta">5 min • Beginner</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-beginner1">▶</button>
+      </div>
+
+      <div class="meditation-item" onclick="playMeditation(this, 'beginner2')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">🌿</div>
+          <div>
+            <div class="meditation-item-title">Morning Calm</div>
+            <div class="meditation-item-meta">7 min • Beginner</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-beginner2">▶</button>
+      </div>
+    </div>
+
+    <!-- Stress Relief -->
+    <div class="meditation-category">Stress Relief</div>
+    <div class="meditation-list">
+      <div class="meditation-item" onclick="playMeditation(this, 'stress1')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">🌊</div>
+          <div>
+            <div class="meditation-item-title">Ocean Breath</div>
+            <div class="meditation-item-meta">10 min • Stress Relief</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-stress1">▶</button>
+      </div>
+
+      <div class="meditation-item" onclick="playMeditation(this, 'stress2')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">☁️</div>
+          <div>
+            <div class="meditation-item-title">Let It Go</div>
+            <div class="meditation-item-meta">8 min • Stress Relief</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-stress2">▶</button>
+      </div>
+    </div>
+
+    <!-- Sleep -->
+    <div class="meditation-category">Sleep</div>
+    <div class="meditation-list">
+      <div class="meditation-item" onclick="playMeditation(this, 'sleep1')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">🌙</div>
+          <div>
+            <div class="meditation-item-title">Deep Sleep Journey</div>
+            <div class="meditation-item-meta">15 min • Sleep</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-sleep1">▶</button>
+      </div>
+
+      <div class="meditation-item" onclick="playMeditation(this, 'sleep2')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">⭐</div>
+          <div>
+            <div class="meditation-item-title">Starlight Relaxation</div>
+            <div class="meditation-item-meta">12 min • Sleep</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-sleep2">▶</button>
+      </div>
+    </div>
+
+    <!-- Focus -->
+    <div class="meditation-category">Focus</div>
+    <div class="meditation-list">
+      <div class="meditation-item" onclick="playMeditation(this, 'focus1')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">🎯</div>
+          <div>
+            <div class="meditation-item-title">Clear Mind</div>
+            <div class="meditation-item-meta">10 min • Focus</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-focus1">▶</button>
+      </div>
+
+      <div class="meditation-item" onclick="playMeditation(this, 'focus2')">
+        <div class="meditation-item-left">
+          <div class="meditation-item-emoji">💡</div>
+          <div>
+            <div class="meditation-item-title">Deep Focus</div>
+            <div class="meditation-item-meta">20 min • Focus</div>
+          </div>
+        </div>
+        <button class="meditation-play-btn" id="btn-focus2">▶</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
