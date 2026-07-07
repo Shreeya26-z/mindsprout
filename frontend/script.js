@@ -1,6 +1,6 @@
 const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
 if (protectedPages.includes(currentPage)) {
@@ -1257,4 +1257,151 @@ function changeVolume(value) {
   if (currentAudio) {
     currentAudio.volume = value;
   }
+} 
+// ── Sleep Sounds ──
+const sleepSounds = {
+  rain: {
+    name: "Rain on Window",
+    emoji: "🌧️",
+    youtubeId: "q76bMs-NwRk",
+  },
+  ocean: {
+    name: "Ocean Waves",
+    emoji: "🌊",
+    youtubeId: "WHPEKLQID4U",
+  },
+  forest: {
+    name: "Forest Sounds",
+    emoji: "🌲",
+    youtubeId: "xNN7iTA57jM",
+  },
+  thunder: {
+    name: "Thunder Storm",
+    emoji: "🌩️",
+    youtubeId: "nDq6TstdEi8",
+  },
+  wind: {
+    name: "Gentle Wind",
+    emoji: "💨",
+    youtubeId: "mPZkdNFkNps",
+  },
+  fire: {
+    name: "Soft Fireplace",
+    emoji: "🔥",
+    youtubeId: "UgHKb_7884o",
+  },
+  piano: {
+    name: "Gentle Piano",
+    emoji: "🎹",
+    youtubeId: "77ZozI0rw7w",
+  },
+  whitenoise: {
+    name: "White Noise",
+    emoji: "📻",
+    youtubeId: "1ZYbU82GVz4",
+  },
+  lofi: {
+    name: "Lo-Fi Beats",
+    emoji: "🎵",
+    youtubeId: "lTRoQ6tg3bE",
+  },
+  singing: {
+    name: "Tibetan Bowls",
+    emoji: "🔔",
+    youtubeId: "60OzBkwPcCc",
+  },
+  };
+
+let sleepIsPlaying = false;
+let sleepTimerInterval = null;
+let sleepTimerSeconds = 0;
+
+function playSleepSound(soundId, el) {
+  const sound = sleepSounds[soundId];
+  if (!sound) return;
+
+  const existing = document.getElementById("youtubePlayer");
+  if (existing) existing.remove();
+
+  document.querySelectorAll(".sleep-sound-card").forEach(c => c.classList.remove("active-sound"));
+  el.classList.add("active-sound");
+
+  const playerCard = document.getElementById("sleepPlayerCard");
+  playerCard.style.display = "block";
+  document.getElementById("sleepEmoji").textContent = sound.emoji;
+  document.getElementById("sleepTitle").textContent = sound.name;
+
+  // Create visible YouTube iframe with controls
+  const iframeContainer = document.getElementById("youtubeContainer");
+  iframeContainer.innerHTML = `
+    <iframe 
+      id="youtubePlayer"
+      width="100%"
+      height="80"
+      src="https://www.youtube.com/embed/${sound.youtubeId}?autoplay=1&loop=1&playlist=${sound.youtubeId}&mute=0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+      style="border-radius:12px;border:none;opacity:0.01;position:absolute;"
+    ></iframe>
+    <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:8px;">
+      🔊 Use your device volume to adjust sound
+    </div>
+  `;
+
+  sleepIsPlaying = true;
+  document.getElementById("sleepPlayPauseBtn").textContent = "⏸";
+  playerCard.scrollIntoView({ behavior: "smooth" });
+}
+
+function toggleSleepPlayPause() {
+  const iframe = document.getElementById("youtubePlayer");
+  if (!iframe) return;
+
+  if (sleepIsPlaying) {
+    iframe.src = iframe.src.replace("autoplay=1", "autoplay=0");
+    sleepIsPlaying = false;
+    document.getElementById("sleepPlayPauseBtn").textContent = "▶";
+  } else {
+    iframe.src = iframe.src.replace("autoplay=0", "autoplay=1");
+    sleepIsPlaying = true;
+    document.getElementById("sleepPlayPauseBtn").textContent = "⏸";
+  }
+}
+
+function changeSleepVolume(value) {
+  console.log("Volume:", value);
+}
+
+function setSleepTimer(minutes) {
+  if (sleepTimerInterval) {
+    clearInterval(sleepTimerInterval);
+    sleepTimerInterval = null;
+  }
+
+  document.querySelectorAll(".timer-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+
+  if (minutes === 0) {
+    document.getElementById("timerDisplay").textContent = "";
+    return;
+  }
+
+  sleepTimerSeconds = minutes * 60;
+
+  sleepTimerInterval = setInterval(() => {
+    sleepTimerSeconds--;
+    const m = Math.floor(sleepTimerSeconds / 60);
+    const s = sleepTimerSeconds % 60;
+    document.getElementById("timerDisplay").textContent =
+      `Stops in ${m}:${s.toString().padStart(2, "0")}`;
+
+    if (sleepTimerSeconds <= 0) {
+      clearInterval(sleepTimerInterval);
+      const iframe = document.getElementById("youtubePlayer");
+      if (iframe) iframe.remove();
+      sleepIsPlaying = false;
+      document.getElementById("sleepPlayPauseBtn").textContent = "▶";
+      document.getElementById("timerDisplay").textContent = "Sleep timer ended 🌙";
+    }
+  }, 1000);
 }

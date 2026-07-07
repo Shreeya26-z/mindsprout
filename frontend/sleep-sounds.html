@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Sleep Sounds</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Sleep Sounds</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Rest & Recharge 🌙</h1>
+      <p>Calming sounds to help you relax and fall asleep</p>
+    </div>
+
+    <!-- Now Playing -->
+    <div class="sleep-player-card" id="sleepPlayerCard" style="display:none;">
+      <div class="sleep-player-emoji" id="sleepEmoji">🌧️</div>
+      <div class="sleep-player-title" id="sleepTitle">Rain on Window</div>
+      <div class="sleep-player-subtitle">Playing now • Looping</div>
+
+      <!-- Animated rings -->
+      <div class="sleep-rings" id="sleepRings">
+        <div class="ring ring1"></div>
+        <div class="ring ring2"></div>
+        <div class="ring ring3"></div>
+      </div>
+      <!-- YouTube Container -->
+<div id="youtubeContainer" style="position:relative;height:20px;"></div>
+      <!-- Controls -->
+      <div class="player-controls" style="margin-top: 20px;">
+        <button class="player-btn-main" id="sleepPlayPauseBtn" onclick="toggleSleepPlayPause()">⏸</button>
+      </div>
+
+      <!-- Volume -->
+      <div class="volume-row" style="margin-top: 16px;">
+        <span>🔈</span>
+        <input type="range" id="sleepVolumeSlider" min="0" max="1" step="0.1" value="0.7"
+          oninput="changeSleepVolume(this.value)" class="volume-slider"/>
+        <span>🔊</span>
+      </div>
+
+      <!-- Timer -->
+      <div class="sleep-timer-row">
+        <span style="color:rgba(255,255,255,0.7);font-size:13px;">Sleep timer:</span>
+        <div class="sleep-timer-btns">
+          <button class="timer-btn" onclick="setSleepTimer(15)">15m</button>
+          <button class="timer-btn" onclick="setSleepTimer(30)">30m</button>
+          <button class="timer-btn" onclick="setSleepTimer(60)">1hr</button>
+          <button class="timer-btn active" onclick="setSleepTimer(0)">∞</button>
+        </div>
+      </div>
+      <div id="timerDisplay" style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:8px;text-align:center;"></div>
+    </div>
+
+    <!-- Sound Categories -->
+    <div class="section-title">Nature Sounds</div>
+    <div class="sleep-sounds-grid">
+      <div class="sleep-sound-card active-sound" id="card-rain" onclick="playSleepSound('rain', this)">
+        <div class="sleep-sound-emoji">🌧️</div>
+        <div class="sleep-sound-name">Rain on Window</div>
+      </div>
+      <div class="sleep-sound-card" id="card-ocean" onclick="playSleepSound('ocean', this)">
+        <div class="sleep-sound-emoji">🌊</div>
+        <div class="sleep-sound-name">Ocean Waves</div>
+      </div>
+      <div class="sleep-sound-card" id="card-forest" onclick="playSleepSound('forest', this)">
+        <div class="sleep-sound-emoji">🌲</div>
+        <div class="sleep-sound-name">Forest Sounds</div>
+      </div>
+      <div class="sleep-sound-card" id="card-thunder" onclick="playSleepSound('thunder', this)">
+        <div class="sleep-sound-emoji">🌩️</div>
+        <div class="sleep-sound-name">Thunder Storm</div>
+      </div>
+      <div class="sleep-sound-card" id="card-wind" onclick="playSleepSound('wind', this)">
+        <div class="sleep-sound-emoji">💨</div>
+        <div class="sleep-sound-name">Gentle Wind</div>
+      </div>
+      <div class="sleep-sound-card" id="card-fire" onclick="playSleepSound('fire', this)">
+        <div class="sleep-sound-emoji">🔥</div>
+        <div class="sleep-sound-name">Campfire</div>
+      </div>
+    </div>
+
+    <div class="section-title">Ambient Music</div>
+    <div class="sleep-sounds-grid">
+      <div class="sleep-sound-card" id="card-piano" onclick="playSleepSound('piano', this)">
+        <div class="sleep-sound-emoji">🎹</div>
+        <div class="sleep-sound-name">Gentle Piano</div>
+      </div>
+      <div class="sleep-sound-card" id="card-whitenoise" onclick="playSleepSound('whitenoise', this)">
+        <div class="sleep-sound-emoji">📻</div>
+        <div class="sleep-sound-name">White Noise</div>
+      </div>
+      <div class="sleep-sound-card" id="card-lofi" onclick="playSleepSound('lofi', this)">
+        <div class="sleep-sound-emoji">🎵</div>
+        <div class="sleep-sound-name">Lo-Fi Beats</div>
+      </div>
+      <div class="sleep-sound-card" id="card-singing" onclick="playSleepSound('singing', this)">
+        <div class="sleep-sound-emoji">🎶</div>
+        <div class="sleep-sound-name">Tibetan Bowls</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
