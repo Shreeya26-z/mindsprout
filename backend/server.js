@@ -39,7 +39,7 @@ app.use("/api/specialist-auth", require("./routes/specialistAuth"));
 app.use("/api/specialist", require("./routes/specialist"));
 app.use("/api/booking", require("./routes/booking"));
 app.use("/api/journal", require("./routes/journal"));
-
+app.use("/api/community", require("./routes/community"));
 // Socket.io — real time chat
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);

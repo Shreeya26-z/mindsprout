@@ -1,6 +1,6 @@
 const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html", "community.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
 if (protectedPages.includes(currentPage)) {
@@ -1404,4 +1404,144 @@ function setSleepTimer(minutes) {
       document.getElementById("timerDisplay").textContent = "Sleep timer ended 🌙";
     }
   }, 1000);
+}
+// ── Community ──
+async function createPost() {
+  hideMessages();
+
+  const content = document.getElementById("postContent").value.trim();
+  const isAnonymous = document.getElementById("isAnonymous").checked;
+  const token = localStorage.getItem("token");
+
+  if (!content) {
+    showError("errorBox", "Please write something to share.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/community`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ content, isAnonymous }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError("errorBox", data.message);
+      return;
+    }
+
+    showSuccess("successBox", data.message);
+    document.getElementById("postContent").value = "";
+    document.getElementById("charCount").textContent = "0";
+    loadPosts();
+
+  } catch (error) {
+    showError("errorBox", "Cannot connect to server.");
+  }
+}
+
+async function likePost(postId, btn) {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/community/${postId}/like`, {
+      method: "PATCH",
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    btn.classList.toggle("liked", data.likedByMe);
+    btn.innerHTML = `❤️ ${data.likeCount}`;
+
+  } catch (error) {
+    console.error("Like error:", error);
+  }
+}
+
+async function deletePost(postId) {
+  const token = localStorage.getItem("token");
+
+  try {
+    await fetch(`${API}/api/community/${postId}`, {
+      method: "DELETE",
+      headers: { Authorization: token },
+    });
+    loadPosts();
+  } catch (error) {
+    console.error("Delete post error:", error);
+  }
+}
+
+function timeAgo(date) {
+  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  if (seconds < 60) return "just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
+}
+
+async function loadPosts() {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  try {
+    const res = await fetch(`${API}/api/community`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+    const container = document.getElementById("postsFeed");
+
+    if (!data.posts || data.posts.length === 0) {
+      container.innerHTML = `<p style="color:rgba(255,255,255,0.6);font-size:14px;">No stories yet. Be the first to share! 🌱</p>`;
+      return;
+    }
+
+    container.innerHTML = data.posts.map(p => {
+      const initials = p.authorName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+      const isOwn = user && p.userId === user.id;
+
+      return `
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">${p.isAnonymous ? "AU" : initials}</div>
+            <div>
+              <div class="post-author">${p.authorName}</div>
+              <div class="post-time">${timeAgo(p.createdAt)}</div>
+            </div>
+          </div>
+          <div class="post-content">${p.content}</div>
+          <div class="post-actions">
+            <button class="post-like-btn ${p.likedByMe ? "liked" : ""}"
+              onclick="likePost('${p._id}', this)">
+              ❤️ ${p.likeCount}
+            </button>
+            ${isOwn ? `<button class="post-delete-btn" onclick="deletePost('${p._id}')">🗑 Delete</button>` : ""}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Load posts error:", error);
+  }
+}
+
+if (window.location.pathname.includes("community.html")) {
+  // Character counter
+  const textarea = document.getElementById("postContent");
+  if (textarea) {
+    textarea.addEventListener("input", () => {
+      document.getElementById("charCount").textContent = textarea.value.length;
+    });
+  }
+  loadPosts();
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Community</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Community</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Safe Space 💜</h1>
+      <p>Share your journey, support others and connect with people who understand</p>
+    </div>
+
+    <!-- Create Post -->
+    <div class="create-post-card">
+      <textarea
+        id="postContent"
+        placeholder="Share what's on your mind... 🌱"
+        rows="3"
+        maxlength="500"
+      ></textarea>
+      <div class="post-char-count"><span id="charCount">0</span>/500</div>
+      <div class="create-post-footer">
+        <label class="anonymous-toggle">
+          <input type="checkbox" id="isAnonymous"/>
+          <span>Post anonymously</span>
+        </label>
+        <button class="btn-add" onclick="createPost()">Share Story</button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="error-box" id="errorBox"></div>
+    <div class="success-box" id="successBox"></div>
+
+    <!-- Posts Feed -->
+    <div class="section-title">Recent Stories</div>
+    <div id="postsFeed" class="posts-feed">
+      <p style="color:rgba(255,255,255,0.6);font-size:14px;">Loading stories...</p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
