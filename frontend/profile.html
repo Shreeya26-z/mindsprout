@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">My Profile</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="profile-avatar" id="profileAvatar">?</div>
+      <div class="profile-name" id="profileName">Loading...</div>
+      <div class="profile-email" id="profileEmail">Loading...</div>
+      <div class="profile-badge" id="profileBadge">🌿 Seedling</div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-emoji">⭐</div>
+        <div class="stat-value" id="profileXP">0</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">🎯</div>
+        <div class="stat-value" id="profileLevel">1</div>
+        <div class="stat-label">Level</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">🔥</div>
+        <div class="stat-value" id="profileStreak">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">📝</div>
+        <div class="stat-value" id="profileMoods">0</div>
+        <div class="stat-label">Moods</div>
+      </div>
+    </div>
+
+    <!-- XP Progress -->
+    <div class="chart-card">
+      <div class="chart-title">XP Progress to Next Level</div>
+      <div class="xp-bar-container">
+        <div class="xp-bar-fill" id="profileXPBar"></div>
+      </div>
+      <div class="xp-bar-label" id="profileXPLabel">0 / 50 XP</div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="section-title">Achievements 🏆</div>
+    <div id="achievementsList" class="achievements-grid">
+      Loading...
+    </div>
+
+    <!-- Settings -->
+    <div class="section-title">Settings ⚙️</div>
+    <div class="settings-list">
+
+      <div class="settings-item" onclick="window.location.href='wellness.html'">
+        <span class="settings-icon">🌿</span>
+        <span class="settings-label">Wellness Resources</span>
+        <span class="settings-arrow">›</span>
+      </div>
+
+      <div class="settings-item" onclick="window.location.href='meditation.html'">
+        <span class="settings-icon">🧘</span>
+        <span class="settings-label">Guided Meditation</span>
+        <span class="settings-arrow">›</span>
+      </div>
+
+      <div class="settings-item" onclick="window.location.href='sleep-sounds.html'">
+        <span class="settings-icon">🌙</span>
+        <span class="settings-label">Sleep Sounds</span>
+        <span class="settings-arrow">›</span>
+      </div>
+
+      <div class="settings-item" onclick="window.location.href='journal.html'">
+        <span class="settings-icon">📓</span>
+        <span class="settings-label">My Journal</span>
+        <span class="settings-arrow">›</span>
+      </div>
+
+      <div class="settings-item danger" onclick="logout()">
+        <span class="settings-icon">🚪</span>
+        <span class="settings-label">Logout</span>
+        <span class="settings-arrow">›</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

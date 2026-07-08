@@ -1,6 +1,6 @@
 const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html", "community.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html", "community.html", "profile.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
 if (protectedPages.includes(currentPage)) {
@@ -1544,4 +1544,108 @@ if (window.location.pathname.includes("community.html")) {
     });
   }
   loadPosts();
+}
+// ── Profile ──
+async function loadProfile() {
+  const token = localStorage.getItem("token");
+
+  try {
+    // Load user stats
+    const userRes = await fetch(`${API}/api/user`, {
+      headers: { Authorization: token },
+    });
+    const userData = await userRes.json();
+    const user = userData.user;
+
+    // Profile card
+    const initials = user.name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+    document.getElementById("profileAvatar").textContent = initials;
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profileEmail").textContent = user.email;
+    document.getElementById("profileBadge").textContent = `${user.badge.emoji} ${user.badge.name}`;
+
+    // Stats
+    document.getElementById("profileXP").textContent = user.xp;
+    document.getElementById("profileLevel").textContent = user.level;
+    document.getElementById("profileStreak").textContent = user.streak;
+
+    // XP bar
+    const xpInLevel = user.xp % 50;
+    document.getElementById("profileXPBar").style.width = `${(xpInLevel / 50) * 100}%`;
+    document.getElementById("profileXPLabel").textContent = `${xpInLevel} / 50 XP to Level ${user.level + 1}`;
+
+    // Load mood count
+    const moodRes = await fetch(`${API}/api/mood`, {
+      headers: { Authorization: token },
+    });
+    const moodData = await moodRes.json();
+    document.getElementById("profileMoods").textContent = moodData.moods?.length || 0;
+
+    // Achievements
+    const achievements = [
+      {
+        emoji: "🌱",
+        name: "First Step",
+        desc: "Log your first mood",
+        unlocked: moodData.moods?.length > 0,
+      },
+      {
+        emoji: "🔥",
+        name: "On Fire",
+        desc: "3 day streak",
+        unlocked: user.streak >= 3,
+      },
+      {
+        emoji: "⭐",
+        name: "XP Hunter",
+        desc: "Earn 50 XP",
+        unlocked: user.xp >= 50,
+      },
+      {
+        emoji: "🏆",
+        name: "Consistent",
+        desc: "Earn 100 XP",
+        unlocked: user.xp >= 100,
+      },
+      {
+        emoji: "💜",
+        name: "Community",
+        desc: "Share a story",
+        unlocked: user.xp >= 5,
+      },
+      {
+        emoji: "🧘",
+        name: "Mindful",
+        desc: "Try meditation",
+        unlocked: user.xp >= 10,
+      },
+      {
+        emoji: "📓",
+        name: "Journaler",
+        desc: "Write a journal entry",
+        unlocked: user.xp >= 15,
+      },
+      {
+        emoji: "🌟",
+        name: "Master",
+        desc: "Reach Level 5",
+        unlocked: user.level >= 5,
+      },
+    ];
+
+    document.getElementById("achievementsList").innerHTML = achievements.map(a => `
+      <div class="achievement-card ${a.unlocked ? "unlocked" : "locked"}">
+        <div class="achievement-emoji">${a.emoji}</div>
+        <div class="achievement-name">${a.name}</div>
+        <div class="achievement-desc">${a.unlocked ? a.desc : "🔒 " + a.desc}</div>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Profile error:", error);
+  }
+}
+
+if (window.location.pathname.includes("profile.html")) {
+  loadProfile();
 }
