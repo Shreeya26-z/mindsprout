@@ -1987,3 +1987,58 @@ textarea::placeholder {
 .settings-form .form-group input:disabled {
   opacity: 0.5;
 }
+/* ── Bottom Navigation Bar ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 16px;
+  z-index: 100;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 12px;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.bottom-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bottom-nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bottom-nav-emoji {
+  font-size: 22px;
+}
+
+.bottom-nav-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+  color: white;
+  font-weight: 700;
+}
+
+/* Add padding to dashboard container so content doesn't hide behind nav */
+.dashboard-container {
+  padding-bottom: 80px;
+}

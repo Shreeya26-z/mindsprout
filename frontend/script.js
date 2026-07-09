@@ -1731,3 +1731,47 @@ function saveSettings() {
 if (window.location.pathname.includes("profile.html")) {
   loadProfile();
 }
+// ── Bottom Navigation Bar ──
+function addBottomNav() {
+  const pagesWithNav = [
+    "dashboard.html",
+    "mood.html",
+    "habit.html",
+    "analytics.html",
+    "chat.html",
+    "specialists.html",
+    "wellness.html",
+    "journal.html",
+    "meditation.html",
+    "sleep-sounds.html",
+    "community.html",
+    "profile.html",
+  ];
+
+  const currentPage = window.location.pathname.split("/").pop();
+  if (!pagesWithNav.includes(currentPage)) return;
+
+  const navItems = [
+    { emoji: "🏠", label: "Home", page: "dashboard.html" },
+    { emoji: "📊", label: "Analytics", page: "analytics.html" },
+    { emoji: "💜", label: "Community", page: "community.html" },
+    { emoji: "🤖", label: "MindBot", page: "chat.html" },
+    { emoji: "👤", label: "Profile", page: "profile.html" },
+  ];
+
+  const nav = document.createElement("nav");
+  nav.className = "bottom-nav";
+
+  nav.innerHTML = navItems.map(item => `
+    <div class="bottom-nav-item ${currentPage === item.page ? "active" : ""}"
+      onclick="window.location.href='${item.page}'">
+      <span class="bottom-nav-emoji">${item.emoji}</span>
+      <span class="bottom-nav-label">${item.label}</span>
+    </div>
+  `).join("");
+
+  document.body.appendChild(nav);
+}
+
+// Run on every page
+addBottomNav();
