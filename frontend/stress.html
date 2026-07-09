@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSprout — Stress Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+      <span class="app-name">Stress Analysis</span>
+      <div></div>
+    </div>
+
+    <!-- Title -->
+    <div class="welcome-section">
+      <h1>Your Wellness Score 🧠</h1>
+      <p>Based on your mood, habits, journal and streak</p>
+    </div>
+
+    <!-- Overall Score -->
+    <div class="stress-score-card" id="stressScoreCard">
+      <div class="stress-emoji" id="stressEmoji">⏳</div>
+      <div class="stress-score" id="stressScore">--</div>
+      <div class="stress-label" id="stressLabel">Analyzing...</div>
+      <div class="stress-bar-container">
+        <div class="stress-bar-fill" id="stressBarFill"></div>
+      </div>
+      <div class="stress-desc" id="stressDesc">Loading your data...</div>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="section-title">Score Breakdown</div>
+    <div class="breakdown-grid" id="breakdownGrid">
+      <p style="color:rgba(255,255,255,0.6);font-size:14px;">Loading...</p>
+    </div>
+
+    <!-- Radar Chart -->
+    <div class="chart-card" style="margin-top:16px;">
+      <div class="chart-title">Wellness Radar</div>
+      <canvas id="radarChart"></canvas>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="section-title">Recommendations 💡</div>
+    <div id="recommendationsList" class="recommendations-list">
+      <p style="color:rgba(255,255,255,0.6);font-size:14px;">Loading...</p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

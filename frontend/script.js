@@ -1,6 +1,6 @@
 const API = "https://mindsprout-msjx.onrender.com";
 // ── Route Protection ──
-const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html", "community.html", "profile.html"];
+const protectedPages = ["dashboard.html", "mood.html", "habit.html", "analytics.html", "chat.html", "specialists.html", "wellness.html", "journal.html", "meditation.html", "sleep-sounds.html", "community.html", "profile.html", "stress.html"];
 const specialistProtectedPages = ["specialist-dashboard.html"];
 const currentPage = window.location.pathname.split("/").pop();
 if (protectedPages.includes(currentPage)) {
@@ -781,6 +781,11 @@ function renderSpecialists(specialists) {
           ${s.isAvailable ? "Available" : "Unavailable"}
         </span>
       </div>
+      <div class="nav-card" onclick="window.location.href='stress.html'">
+  <div class="nav-card-emoji">🧠</div>
+  <div class="nav-card-title">Stress Analysis</div>
+  <div class="nav-card-subtitle">Your wellness score</div>
+</div>
       <div class="specialist-actions">
         <button class="btn-chat-specialist" onclick="bookAndChat('${s._id}')">
           💬 Chat
@@ -1775,3 +1780,127 @@ function addBottomNav() {
 
 // Run on every page
 addBottomNav();
+// ── Stress Analysis ──
+async function loadStressAnalysis() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/api/stress`, {
+      headers: { Authorization: token },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("Stress analysis error:", data.message);
+      return;
+    }
+
+    // Overall score
+    document.getElementById("stressEmoji").textContent = data.stressEmoji;
+    document.getElementById("stressScore").textContent = data.overallScore;
+    document.getElementById("stressLabel").textContent = data.stressLevel;
+
+    setTimeout(() => {
+      document.getElementById("stressBarFill").style.width = data.overallScore + "%";
+    }, 300);
+
+    // Description
+    const descs = {
+      "Low Stress": "You're doing amazing! Your wellness habits are paying off. Keep up the great work! 🌟",
+      "Moderate": "You're managing well overall. A few small improvements could boost your wellness score significantly.",
+      "High Stress": "Your data suggests you may be under significant stress. Let's work on some areas together.",
+      "Critical": "Your wellness needs attention right now. Please consider speaking to a specialist or trusted person.",
+    };
+    document.getElementById("stressDesc").textContent = descs[data.stressLevel] || "";
+
+    // Breakdown
+    const b = data.breakdown;
+    document.getElementById("breakdownGrid").innerHTML = `
+      <div class="breakdown-card">
+        <div class="breakdown-score">${b.mood.score}</div>
+        <div class="breakdown-label">😊 Mood Score<br/>${b.mood.count} entries this week</div>
+        <div class="breakdown-mini-bar">
+          <div class="breakdown-mini-fill" style="width:${b.mood.score}%"></div>
+        </div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-score">${b.habits.score}</div>
+        <div class="breakdown-label">📅 Habit Completion<br/>${b.habits.count} done today</div>
+        <div class="breakdown-mini-bar">
+          <div class="breakdown-mini-fill" style="width:${b.habits.score}%"></div>
+        </div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-score">${b.journal.score}</div>
+        <div class="breakdown-label">📓 Journal Wellbeing<br/>${b.journal.count} entries this week</div>
+        <div class="breakdown-mini-bar">
+          <div class="breakdown-mini-fill" style="width:${b.journal.score}%"></div>
+        </div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-score">${b.streak.score}</div>
+        <div class="breakdown-label">🔥 Streak Score<br/>${b.streak.days} day streak</div>
+        <div class="breakdown-mini-bar">
+          <div class="breakdown-mini-fill" style="width:${b.streak.score}%"></div>
+        </div>
+      </div>
+    `;
+
+    // Radar Chart
+    const ctx = document.getElementById("radarChart").getContext("2d");
+    new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels: ["Mood", "Habits", "Journal", "Streak"],
+        datasets: [{
+          label: "Your Wellness",
+          data: [b.mood.score, b.habits.score, b.journal.score, b.streak.score],
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "rgba(255, 255, 255, 0.8)",
+          pointBackgroundColor: "white",
+          pointBorderColor: "#764ba2",
+          pointRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            ticks: { color: "rgba(255,255,255,0.5)", stepSize: 25 },
+            grid: { color: "rgba(255,255,255,0.1)" },
+            pointLabels: { color: "white", font: { size: 13 } },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+        },
+      },
+    });
+
+    // Recommendations
+    document.getElementById("recommendationsList").innerHTML =
+      data.recommendations.map(r => `
+        <div class="recommendation-card">
+          <div class="rec-icon">${r.icon}</div>
+          <div class="rec-content">
+            <div class="rec-title">${r.title}</div>
+            <div class="rec-desc">${r.desc}</div>
+            <button class="rec-action-btn"
+              onclick="window.location.href='${r.action}'">
+              ${r.actionLabel} →
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+  } catch (error) {
+    console.error("Stress analysis error:", error);
+  }
+}
+
+if (window.location.pathname.includes("stress.html")) {
+  loadStressAnalysis();
+}
