@@ -14,7 +14,7 @@
     <!-- Header -->
     <div class="dashboard-header">
       <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
-      <span class="app-name">My Profile</span>
+      <span class="app-name">Profile</span>
       <button class="btn-logout" onclick="logout()">Logout</button>
     </div>
 
@@ -23,73 +23,64 @@
       <div class="profile-avatar" id="profileAvatar">?</div>
       <div class="profile-name" id="profileName">Loading...</div>
       <div class="profile-email" id="profileEmail">Loading...</div>
-      <div class="profile-badge" id="profileBadge">🌿 Seedling</div>
     </div>
 
     <!-- Stats Row -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-emoji">⭐</div>
-        <div class="stat-value" id="profileXP">0</div>
-        <div class="stat-label">Total XP</div>
-      </div>
+    <div class="stats-row" style="grid-template-columns: repeat(3,1fr);">
       <div class="stat-card">
         <div class="stat-emoji">🎯</div>
-        <div class="stat-value" id="profileLevel">1</div>
-        <div class="stat-label">Level</div>
+        <div class="stat-value" id="profileSessions">0</div>
+        <div class="stat-label">Sessions</div>
       </div>
       <div class="stat-card">
         <div class="stat-emoji">🔥</div>
         <div class="stat-value" id="profileStreak">0</div>
-        <div class="stat-label">Streak</div>
+        <div class="stat-label">Day Streak</div>
       </div>
       <div class="stat-card">
         <div class="stat-emoji">📝</div>
-        <div class="stat-value" id="profileMoods">0</div>
-        <div class="stat-label">Moods</div>
+        <div class="stat-value" id="profilePosts">0</div>
+        <div class="stat-label">Posts</div>
       </div>
     </div>
 
-    <!-- XP Progress -->
-    <div class="chart-card">
-      <div class="chart-title">XP Progress to Next Level</div>
-      <div class="xp-bar-container">
-        <div class="xp-bar-fill" id="profileXPBar"></div>
+    <!-- Premium Plan -->
+    <div class="chart-card" style="margin-bottom:20px;">
+      <div class="chart-title">Premium Plan</div>
+      <div class="premium-row">
+        <div>
+          <div class="premium-status" id="premiumStatus">🌿 Free Plan</div>
+          <div class="premium-desc" id="premiumDesc">Upgrade to unlock all features</div>
+        </div>
+        <button class="btn-add" onclick="upgradePlan()">Upgrade</button>
       </div>
-      <div class="xp-bar-label" id="profileXPLabel">0 / 50 XP</div>
-    </div>
-
-    <!-- Achievements -->
-    <div class="section-title">Achievements 🏆</div>
-    <div id="achievementsList" class="achievements-grid">
-      Loading...
     </div>
 
     <!-- Settings -->
-    <div class="section-title">Settings ⚙️</div>
+    <div class="section-title">Account</div>
     <div class="settings-list">
 
-      <div class="settings-item" onclick="window.location.href='wellness.html'">
-        <span class="settings-icon">🌿</span>
-        <span class="settings-label">Wellness Resources</span>
+      <div class="settings-item" onclick="showAccountSettings()">
+        <span class="settings-icon">⚙️</span>
+        <span class="settings-label">Account Settings</span>
         <span class="settings-arrow">›</span>
       </div>
 
-      <div class="settings-item" onclick="window.location.href='meditation.html'">
-        <span class="settings-icon">🧘</span>
-        <span class="settings-label">Guided Meditation</span>
+      <div class="settings-item" onclick="showNotifications()">
+        <span class="settings-icon">🔔</span>
+        <span class="settings-label">Notifications</span>
         <span class="settings-arrow">›</span>
       </div>
 
-      <div class="settings-item" onclick="window.location.href='sleep-sounds.html'">
-        <span class="settings-icon">🌙</span>
-        <span class="settings-label">Sleep Sounds</span>
+      <div class="settings-item" onclick="showPrivacy()">
+        <span class="settings-icon">🔒</span>
+        <span class="settings-label">Privacy & Safety</span>
         <span class="settings-arrow">›</span>
       </div>
 
-      <div class="settings-item" onclick="window.location.href='journal.html'">
-        <span class="settings-icon">📓</span>
-        <span class="settings-label">My Journal</span>
+      <div class="settings-item" onclick="showHelp()">
+        <span class="settings-icon">❓</span>
+        <span class="settings-label">Help & Support</span>
         <span class="settings-arrow">›</span>
       </div>
 
@@ -101,6 +92,110 @@
 
     </div>
 
+  </div>
+
+  <!-- Account Settings Modal -->
+  <div class="modal-overlay" id="accountModal" onclick="closeModal('accountModal')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
+      <div class="modal-title">⚙️ Account Settings</div>
+      <div class="modal-body">
+        <div class="settings-form">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="settingsName" placeholder="Your name"/>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="settingsEmail" placeholder="Your email" disabled/>
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="settingsPassword" placeholder="Leave blank to keep current"/>
+          </div>
+          <button class="btn-primary" style="margin-top:16px;" onclick="saveSettings()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Modal -->
+  <div class="modal-overlay" id="notificationsModal" onclick="closeModal('notificationsModal')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('notificationsModal')">✕</button>
+      <div class="modal-title">🔔 Notifications</div>
+      <div class="modal-body">
+        <div class="toggle-row">
+          <span>Daily mood reminder</span>
+          <input type="checkbox" checked class="toggle-check"/>
+        </div>
+        <div class="toggle-row">
+          <span>Habit reminders</span>
+          <input type="checkbox" checked class="toggle-check"/>
+        </div>
+        <div class="toggle-row">
+          <span>Weekly progress report</span>
+          <input type="checkbox" class="toggle-check"/>
+        </div>
+        <div class="toggle-row">
+          <span>Community activity</span>
+          <input type="checkbox" checked class="toggle-check"/>
+        </div>
+        <div class="toggle-row">
+          <span>Specialist messages</span>
+          <input type="checkbox" checked class="toggle-check"/>
+        </div>
+        <button class="btn-primary" style="margin-top:20px;" onclick="closeModal('notificationsModal')">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Modal -->
+  <div class="modal-overlay" id="privacyModal" onclick="closeModal('privacyModal')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('privacyModal')">✕</button>
+      <div class="modal-title">🔒 Privacy & Safety</div>
+      <div class="modal-body">
+        <div class="toggle-row">
+          <span>Show profile to community</span>
+          <input type="checkbox" checked class="toggle-check"/>
+        </div>
+        <div class="toggle-row">
+          <span>Allow specialists to view my mood history</span>
+          <input type="checkbox" checked class="toggle-check"/>
+        </div>
+        <div class="toggle-row">
+          <span>Anonymous mode in community</span>
+          <input type="checkbox" class="toggle-check"/>
+        </div>
+        <h3 style="color:white;margin:16px 0 8px;">Data & Privacy</h3>
+        <p>Your data is encrypted and stored securely. We never sell your personal information to third parties.</p>
+        <h3 style="color:white;margin:16px 0 8px;">Safety Resources</h3>
+        <p>If you're in crisis, please reach out to a mental health professional or call your local emergency services.</p>
+        <button class="btn-primary" style="margin-top:20px;" onclick="closeModal('privacyModal')">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal-overlay" id="helpModal" onclick="closeModal('helpModal')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
+      <div class="modal-title">❓ Help & Support</div>
+      <div class="modal-body">
+        <h3>Frequently Asked Questions</h3>
+        <h3>How does XP work?</h3>
+        <p>You earn +10 XP for logging your mood and +5 XP for completing habits. Every 50 XP levels you up!</p>
+        <h3>How do I chat with a specialist?</h3>
+        <p>Go to the Specialists page, find an available specialist and click Chat or Book.</p>
+        <h3>Is my journal private?</h3>
+        <p>Yes! Your journal entries are completely private and only visible to you.</p>
+        <h3>How do I reset my streak?</h3>
+        <p>Your streak resets if you miss a day of activity. Log a mood or complete a habit daily to keep it going!</p>
+        <h3>Contact Us</h3>
+        <p>Email us at support@mindsprout.app for any issues or feedback. We respond within 24 hours.</p>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>

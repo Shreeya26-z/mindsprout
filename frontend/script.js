@@ -1649,3 +1649,85 @@ async function loadProfile() {
 if (window.location.pathname.includes("profile.html")) {
   loadProfile();
 }
+// ── Profile ──
+async function loadProfile() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const userRes = await fetch(`${API}/api/user`, {
+      headers: { Authorization: token },
+    });
+    const userData = await userRes.json();
+    const user = userData.user;
+
+    const initials = user.name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+    document.getElementById("profileAvatar").textContent = initials;
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profileEmail").textContent = user.email;
+    document.getElementById("profileStreak").textContent = user.streak;
+
+    // Pre-fill account settings
+    document.getElementById("settingsName").value = user.name;
+    document.getElementById("settingsEmail").value = user.email;
+
+    // Load mood count as sessions
+    const moodRes = await fetch(`${API}/api/mood`, {
+      headers: { Authorization: token },
+    });
+    const moodData = await moodRes.json();
+    document.getElementById("profileSessions").textContent = moodData.moods?.length || 0;
+
+    // Load community posts count
+    const postsRes = await fetch(`${API}/api/community`, {
+      headers: { Authorization: token },
+    });
+    const postsData = await postsRes.json();
+    const myPosts = postsData.posts?.filter(p => p.userId === user.id) || [];
+    document.getElementById("profilePosts").textContent = myPosts.length;
+
+  } catch (error) {
+    console.error("Profile error:", error);
+  }
+}
+
+function showAccountSettings() {
+  document.getElementById("accountModal").classList.add("active");
+}
+
+function showNotifications() {
+  document.getElementById("notificationsModal").classList.add("active");
+}
+
+function showPrivacy() {
+  document.getElementById("privacyModal").classList.add("active");
+}
+
+function showHelp() {
+  document.getElementById("helpModal").classList.add("active");
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove("active");
+}
+
+function upgradePlan() {
+  const status = document.getElementById("premiumStatus");
+  const desc = document.getElementById("premiumDesc");
+  const btn = document.querySelector(".premium-row .btn-add");
+
+  status.textContent = "⭐ Premium Plan";
+  desc.textContent = "Active until Dec 2025";
+  btn.textContent = "Active ✅";
+  btn.disabled = true;
+  btn.style.background = "rgba(80,200,120,0.3)";
+  btn.style.color = "white";
+}
+
+function saveSettings() {
+  closeModal("accountModal");
+  alert("Settings saved! ✅");
+}
+
+if (window.location.pathname.includes("profile.html")) {
+  loadProfile();
+}
