@@ -456,74 +456,131 @@ if (window.location.pathname.includes("analytics.html")) {
 // ── Chatbot ──
 const botResponses = {
   sad: [
-    "I'm really sorry you're feeling sad 💙 It's okay to feel this way. Take it one moment at a time.",
-    "Sadness is a valid emotion. Try taking a few deep breaths and be kind to yourself today 🌸",
-    "I hear you. Sometimes writing down your feelings can help. You're not alone 💜",
+    "I hear you, and I want you to know that what you're feeling is completely valid 💙 Sadness isn't weakness — it's a sign that something matters to you. Take a breath. You don't have to fix everything today. What's weighing on you the most right now?",
+    "Sometimes sadness visits us without warning, and that's okay 🌧️ You don't have to pretend to be okay. Be gentle with yourself today — maybe make a warm drink, wrap yourself in a blanket, and just let yourself feel. I'm right here with you.",
+    "It takes real courage to acknowledge when we're hurting 💜 You're not alone in this. Even the strongest people have moments when the world feels heavy. Is there one small thing — even tiny — that might bring you a little comfort right now?",
+    "Sadness often carries a message worth listening to 🌸 It might be telling you that you need rest, connection, or simply permission to slow down. What do you think your heart is trying to say to you?",
   ],
   stress: [
-    "Stress can feel overwhelming. Try the 4-7-8 breathing technique: breathe in for 4 seconds, hold for 7, out for 8 🌬️",
-    "When stress hits, take a 5 minute walk outside. Fresh air does wonders 🌿",
-    "You're doing better than you think. Break your tasks into small steps and tackle one at a time 💪",
+    "Stress can make everything feel urgent and impossible at the same time 🌬️ Let's slow down for just a moment. Try this with me: breathe in for 4 counts... hold for 4... breathe out for 6. Just that, right now. What's creating the most pressure for you today?",
+    "When stress piles up, our nervous system goes into overdrive — and that's exhausting 💚 Remember: you don't have to solve everything at once. Pick just ONE thing. The smallest possible next step. What would that be?",
+    "You're carrying a lot, and I see that 🌿 Stress often comes from caring deeply about things that matter. That caring is a strength, even when it doesn't feel like it. What would feel like a relief to let go of, even temporarily?",
+    "I want you to know — feeling stressed doesn't mean you're failing 💪 It means you're human and you're trying. Take a 5-minute walk if you can. Fresh air and movement can shift your nervous system out of fight-or-flight mode. You've got this.",
   ],
   angry: [
-    "It's okay to feel angry. Try counting to 10 slowly before reacting 🧘",
-    "Anger is energy — channel it into something positive like a workout or journaling 💪",
-    "Take a deep breath. Step away for a moment and give yourself space to cool down 🌬️",
+    "Anger is one of the most misunderstood emotions — it's actually a signal that something important to you has been violated 🔥 Before you react, try this: count slowly to 10 and breathe deeply between each number. What's underneath this anger?",
+    "It's completely okay to feel angry — what matters is what we do with it 💪 Try channeling that energy: go for a walk, do some jumping jacks, write it all out in a journal. Physical movement helps release anger safely. What happened that triggered this?",
+    "Anger often hides other emotions underneath — hurt, disappointment, or feeling unheard 🌊 Give yourself space to cool down before responding to anyone. You deserve to express yourself from a place of clarity, not reaction. What boundary might need to be spoken?",
+    "I hear your frustration, and it's valid 🧘 Sometimes we need to feel angry before we can move forward. But don't let it consume you — you're bigger than this moment. Is there something specific that needs to change in your situation?",
   ],
   happy: [
-    "That's amazing! Happiness is contagious 😄 Keep that energy going!",
-    "Love to hear that! Celebrate the good moments — you deserve it 🎉",
-    "Wonderful! Try to share that happiness with someone around you today 🌟",
+    "This genuinely makes me smile! 😄 Joy is meant to be celebrated — don't minimize it or rush past it. Pause and really soak in this feeling. What specifically is making your heart feel light today?",
+    "YES! This is what we love to hear 🌟 Happiness is contagious — have you thought about sharing this energy with someone who might need it today? A message, a call, even a smile can ripple outward in beautiful ways.",
+    "Hold onto this feeling 🎉 Notice exactly what contributed to it — your environment, who you were with, what you were doing. These are clues to what makes you thrive. How can you create more moments like this?",
+    "You deserve every bit of this happiness 💛 Don't let anyone or anything rush you past it. Write it down, take a mental photo, call someone you love. Good moments are worth anchoring in your memory.",
   ],
   anxious: [
-    "Anxiety can be tough. Try grounding yourself — name 5 things you can see right now 👀",
-    "Take slow deep breaths. You are safe right now 💙 This feeling will pass.",
-    "When anxiety strikes, focus on what you can control and let go of what you can't 🌿",
+    "Anxiety can make everything feel like an emergency, even when it isn't 💙 Let's ground you right now. Name 5 things you can see around you. 4 things you can touch. 3 you can hear. 2 you can smell. 1 you can taste. You are safe in this moment.",
+    "I hear you — anxiety is one of the hardest things to carry because it's invisible to others but so loud inside 🌬️ Remember: anxiety lies. It tells you the worst will happen, but most of what we fear never does. What's the most likely outcome of what you're facing?",
+    "When anxiety spikes, your body is trying to protect you — even if it's being overprotective right now 💚 Try placing your hand on your heart and taking three slow, deep breaths. Feel your heartbeat slow down. You are stronger than this feeling.",
+    "Anxiety thrives in uncertainty, so let's focus on what IS within your control 🌿 You can control your breathing, your next small action, and how you talk to yourself. What's one tiny thing you can do in the next 5 minutes to feel more grounded?",
   ],
   lonely: [
-    "Loneliness is hard. Remember you are never truly alone — I'm here for you 💜",
-    "Try reaching out to one person today, even just a text. Connection heals 🌸",
-    "You matter more than you know. Consider joining a community or group activity 🌟",
+    "Loneliness is one of the most painful human experiences — feeling unseen and disconnected cuts deep 💜 But I want you to know: you reaching out right now, even to me, matters. You are not invisible. What kind of connection are you craving most right now?",
+    "Feeling lonely doesn't mean you're unlovable — it means you're human and you need connection 🌸 Sometimes loneliness is a signal to nurture our existing relationships. Is there one person — even someone you haven't spoken to in a while — you could reach out to today?",
+    "I'm here with you right now, and I don't want you to feel alone 💙 Loneliness often lies to us and tells us we'll always feel this way. That's not true. Connection is possible, even when it feels far away. What's one small step toward feeling less isolated?",
+    "You matter more than you may feel right now 🌟 Loneliness can make us withdraw further, which deepens the feeling. What's one community, group, or activity that has made you feel connected in the past — even briefly?",
   ],
   tired: [
-    "Rest is productive too! Make sure you're getting enough sleep tonight 😴",
-    "Listen to your body — it might be asking for a break. Be gentle with yourself 🌿",
-    "Try a short 10 minute nap or meditation. Even brief rest can recharge you ⚡",
+    "Your body and mind are sending you an important message right now — please listen 😴 Rest is not laziness. Rest is medicine. You cannot pour from an empty cup. What would true, guilt-free rest look like for you today?",
+    "Exhaustion is your body's way of saying 'I've been strong for too long — I need a break' 🌙 And that's okay. You're allowed to slow down. What's one commitment you could temporarily release to give yourself permission to rest?",
+    "Sometimes the most productive thing we can do is stop 🌿 Sleep deprivation and mental exhaustion cloud our thinking, our emotions, and our resilience. What would help you recharge — even just a little — in the next hour?",
+    "I hear how drained you are 💚 Before anything else, try to do one restorative thing: a short nap, a gentle walk, a few minutes of silence. Your work and responsibilities will still be there after you've taken care of yourself first.",
+  ],
+  hopeful: [
+    "Hope is one of the most powerful forces in the human spirit 🌱 Hold onto this feeling — it's telling you that things CAN get better. What is it that you're feeling hopeful about? Tell me more!",
+    "I love this energy! ✨ Hope combined with small, consistent action creates real change. What's one step you could take today toward what you're hoping for?",
+    "This is beautiful to hear 🌟 Hope is a choice, and you're making it. What has shifted that's allowing you to feel this way?",
+  ],
+  grateful: [
+    "Gratitude is genuinely one of the most powerful wellness practices — research shows it rewires our brain toward positivity 🙏 What you're feeling right now is real and it matters. Who or what are you feeling most grateful for?",
+    "A grateful heart changes everything 🌸 When we focus on what we have rather than what we lack, the world looks different. Is there someone in your life who deserves to hear how grateful you are for them today?",
+    "I love that you're practicing gratitude 💛 It's easy to overlook the good when life gets hard. What's something small — something you usually take for granted — that you're appreciating today?",
+  ],
+  motivation: [
+    "You came to the right place 💪 Motivation follows action — not the other way around. You don't wait to feel motivated; you start small and motivation catches up. What's the tiniest possible first step you could take right now?",
+    "Here's something powerful: you don't need to feel ready to begin 🌟 Readiness is a feeling that comes AFTER starting, not before. What's one thing you've been putting off that you could spend just 5 minutes on today?",
+    "You've got everything you need already inside you 🔥 Sometimes we just need a reminder of our own strength. Think back to a time you overcame something hard. You did it then. You can do this now. What would that version of you say to you right now?",
+  ],
+  grief: [
+    "I'm so sorry for what you're going through 💙 Grief is love with nowhere to go, and it's one of the heaviest things a human being can carry. There's no timeline for healing and no right way to grieve. I'm here with you.",
+    "Grief comes in waves — sometimes gentle, sometimes overwhelming 🌊 Be patient with yourself. You don't have to be okay right now. What do you need most in this moment — to talk, to be heard, or just to not feel alone?",
+    "Loss changes us, and that's okay 💜 The pain you feel is a testament to how much you loved or cared. Please don't try to rush past it. Is there someone in your life who can sit with you through this?",
+  ],
+  relationship: [
+    "Relationships are one of the most complex and rewarding parts of being human 💙 Whether it's family, friendship, or romance — they take constant nurturing. What's happening in your relationship that's on your mind?",
+    "Healthy relationships require honest communication, and that's hard 🌸 It takes courage to express our needs and even more courage to listen to someone else's. What do you wish the other person understood about how you feel?",
+    "Every relationship goes through difficult seasons 💚 What matters is whether both people are willing to work through it. What would a resolution look like to you?",
+  ],
+  sleep: [
+    "Sleep is the foundation of everything — mood, focus, resilience, physical health 🌙 When we don't sleep well, everything feels harder. What's getting in the way of your sleep right now?",
+    "Poor sleep is often a symptom of an anxious or overactive mind 😴 Try this tonight: no screens 30 minutes before bed, write down tomorrow's tasks so your brain can let go, and keep your room cool and dark. Would our Sleep Sounds feature help?",
+    "Your body heals and processes emotions during sleep — it's not wasted time, it's essential time 🌿 What does your bedtime routine look like currently?",
   ],
   default: [
-    "Thank you for sharing that with me 🌱 I'm here to listen. Tell me more!",
-    "You're taking a great step by talking about how you feel. Keep going 💪",
-    "I hear you. Remember — every small step forward counts on your wellness journey 🌿",
-    "That's interesting! How does that make you feel? 💙",
+    "Thank you for sharing that with me 🌱 I want to make sure I understand what you're going through. Can you tell me a little more about what's on your mind?",
+    "I'm here and I'm listening — all of it 💙 Sometimes just putting words to our feelings helps us understand them better. What else is going on for you?",
+    "What you're sharing matters, and so do you 🌿 I may be an AI, but I genuinely care about how you're doing. What would feel most helpful right now — to vent, to get advice, or just to be heard?",
+    "Every feeling you have is valid and worth exploring 💜 You don't have to have it all figured out. What's the thing that's taking up the most space in your head right now?",
+    "You reached out, and that takes courage 🌟 Whether things are wonderful or really hard right now, I'm glad you're here. What's going on in your world today?",
   ],
 };
 
 function getBotResponse(message) {
   const msg = message.toLowerCase();
-  if (msg.includes("sad") || msg.includes("unhappy") || msg.includes("depressed") || msg.includes("cry")) {
+
+  if (msg.includes("sad") || msg.includes("unhappy") || msg.includes("depressed") || msg.includes("cry") || msg.includes("crying") || msg.includes("heartbroken") || msg.includes("miserable") || msg.includes("down")) {
     return botResponses.sad[Math.floor(Math.random() * botResponses.sad.length)];
   }
-  if (msg.includes("stress") || msg.includes("overwhelm") || msg.includes("pressure") || msg.includes("worried")) {
+  if (msg.includes("stress") || msg.includes("overwhelm") || msg.includes("pressure") || msg.includes("worried") || msg.includes("worry") || msg.includes("burden") || msg.includes("too much")) {
     return botResponses.stress[Math.floor(Math.random() * botResponses.stress.length)];
   }
-  if (msg.includes("angry") || msg.includes("anger") || msg.includes("mad") || msg.includes("frustrated")) {
+  if (msg.includes("angry") || msg.includes("anger") || msg.includes("mad") || msg.includes("frustrated") || msg.includes("furious") || msg.includes("rage") || msg.includes("irritated")) {
     return botResponses.angry[Math.floor(Math.random() * botResponses.angry.length)];
   }
-  if (msg.includes("happy") || msg.includes("great") || msg.includes("good") || msg.includes("excited")) {
+  if (msg.includes("happy") || msg.includes("great") || msg.includes("excited") || msg.includes("joy") || msg.includes("wonderful") || msg.includes("amazing") || msg.includes("fantastic") || msg.includes("good")) {
     return botResponses.happy[Math.floor(Math.random() * botResponses.happy.length)];
   }
-  if (msg.includes("anxious") || msg.includes("anxiety") || msg.includes("nervous") || msg.includes("panic")) {
+  if (msg.includes("anxious") || msg.includes("anxiety") || msg.includes("nervous") || msg.includes("panic") || msg.includes("scared") || msg.includes("fear") || msg.includes("dread")) {
     return botResponses.anxious[Math.floor(Math.random() * botResponses.anxious.length)];
   }
-  if (msg.includes("lonely") || msg.includes("alone") || msg.includes("isolated")) {
+  if (msg.includes("lonely") || msg.includes("alone") || msg.includes("isolated") || msg.includes("no one") || msg.includes("nobody") || msg.includes("friendless")) {
     return botResponses.lonely[Math.floor(Math.random() * botResponses.lonely.length)];
   }
-  if (msg.includes("tired") || msg.includes("exhausted") || msg.includes("sleepy") || msg.includes("fatigue")) {
+  if (msg.includes("tired") || msg.includes("exhausted") || msg.includes("drained") || msg.includes("fatigue") || msg.includes("burnout") || msg.includes("no energy")) {
     return botResponses.tired[Math.floor(Math.random() * botResponses.tired.length)];
   }
+  if (msg.includes("hope") || msg.includes("hopeful") || msg.includes("better") || msg.includes("optimis") || msg.includes("looking forward")) {
+    return botResponses.hopeful[Math.floor(Math.random() * botResponses.hopeful.length)];
+  }
+  if (msg.includes("grateful") || msg.includes("thankful") || msg.includes("appreciate") || msg.includes("blessed") || msg.includes("gratitude")) {
+    return botResponses.grateful[Math.floor(Math.random() * botResponses.grateful.length)];
+  }
+  if (msg.includes("motivat") || msg.includes("inspire") || msg.includes("lazy") || msg.includes("procrastinat") || msg.includes("stuck") || msg.includes("can't start")) {
+    return botResponses.motivation[Math.floor(Math.random() * botResponses.motivation.length)];
+  }
+  if (msg.includes("grief") || msg.includes("loss") || msg.includes("lost") || msg.includes("miss") || msg.includes("died") || msg.includes("death") || msg.includes("gone")) {
+    return botResponses.grief[Math.floor(Math.random() * botResponses.grief.length)];
+  }
+  if (msg.includes("relationship") || msg.includes("partner") || msg.includes("boyfriend") || msg.includes("girlfriend") || msg.includes("husband") || msg.includes("wife") || msg.includes("breakup") || msg.includes("divorce") || msg.includes("fight")) {
+    return botResponses.relationship[Math.floor(Math.random() * botResponses.relationship.length)];
+  }
+  if (msg.includes("sleep") || msg.includes("insomnia") || msg.includes("cant sleep") || msg.includes("awake") || msg.includes("nightmare")) {
+    return botResponses.sleep[Math.floor(Math.random() * botResponses.sleep.length)];
+  }
+
   return botResponses.default[Math.floor(Math.random() * botResponses.default.length)];
 }
-
 function sendMessage() {
   const input = document.getElementById("chatInput");
   const message = input.value.trim();
