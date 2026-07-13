@@ -1365,12 +1365,12 @@ const sleepSounds = {
   lofi: {
     name: "Lo-Fi Beats",
     emoji: "🎵",
-    youtubeId: "lTRoQ6tg3bE",
+    youtubeId: "5qap5aO4i9A",
   },
   singing: {
     name: "Tibetan Bowls",
     emoji: "🔔",
-    youtubeId: "60OzBkwPcCc",
+    youtubeId: "L1AzPdkMEC8",
   },
   };
 
