@@ -1291,42 +1291,12 @@ function togglePlayPause() {
   document.getElementById("playerTitle").textContent = meditation.title;
   document.getElementById("playerDuration").textContent = meditation.duration;
 
-  // Create audio
-  currentAudio = new Audio(meditation.url);
-  currentAudio.volume = document.getElementById("volumeSlider").value;
-
-  // Update progress
-  currentAudio.addEventListener("timeupdate", () => {
-    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
-    document.getElementById("progressFill").style.width = progress + "%";
-    document.getElementById("currentTime").textContent = formatTime(currentAudio.currentTime);
-    document.getElementById("totalTime").textContent = formatTime(currentAudio.duration || 0);
-  });
-
-  currentAudio.addEventListener("ended", () => {
-    isPlaying = false;
-    document.getElementById("playPauseBtn").textContent = "▶";
-    document.getElementById("progressFill").style.width = "0%";
-    el.querySelector(".meditation-play-btn").textContent = "▶";
-    el.classList.remove("playing");
-  });
-
-  // Play
-  currentAudio.play();
-  isPlaying = true;
-  document.getElementById("playPauseBtn").textContent = "⏸";
-  el.querySelector(".meditation-play-btn").textContent = "⏸";
-  el.classList.add("playing");
-
-  // Scroll to player
-  playerCard.scrollIntoView({ behavior: "smooth" });
-}
-
 function togglePlayPause() {
-  if (!currentAudio) return;
+  const iframe = document.getElementById("meditationYTPlayer");
+  if (!iframe) return;
 
   if (isPlaying) {
-    currentAudio.pause();
+    iframe.src = iframe.src.replace("autoplay=1", "autoplay=0");
     isPlaying = false;
     document.getElementById("playPauseBtn").textContent = "▶";
     if (currentMeditationId) {
@@ -1334,7 +1304,7 @@ function togglePlayPause() {
       if (btn) btn.textContent = "▶";
     }
   } else {
-    currentAudio.play();
+    iframe.src = iframe.src.replace("autoplay=0", "autoplay=1");
     isPlaying = true;
     document.getElementById("playPauseBtn").textContent = "⏸";
     if (currentMeditationId) {
