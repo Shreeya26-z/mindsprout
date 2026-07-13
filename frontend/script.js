@@ -1162,48 +1162,64 @@ const meditations = {
     emoji: "🌬️",
     duration: "5 min",
     youtubeId: "8ln4XfRi6uw",
+    bg: "bg-sunrise",
+    bgDesc: "🌅 Sunrise • Fresh Start",
   },
   beginner2: {
     title: "Morning Calm",
     emoji: "🌿",
     duration: "7 min",
     youtubeId: "j734gLbQFbU",
+    bg: "bg-sunrise",
+    bgDesc: "🌄 Golden Morning • Warm & Peaceful",
   },
   stress1: {
     title: "Ocean Breath",
     emoji: "🌊",
     duration: "10 min",
     youtubeId: "yPebkk7xjF0",
+    bg: "bg-ocean",
+    bgDesc: "🌊 Deep Ocean • Calm & Flowing",
   },
   stress2: {
     title: "Let It Go",
     emoji: "☁️",
     duration: "8 min",
     youtubeId: "PYZIMn-xrDc",
+    bg: "bg-sunset",
+    bgDesc: "🌇 Sunset • Release & Surrender",
   },
   sleep1: {
     title: "Deep Sleep Journey",
     emoji: "🌙",
     duration: "15 min",
     youtubeId: "C4bofW53sO8",
+    bg: "bg-night",
+    bgDesc: "🌙 Midnight • Deep & Restful",
   },
   sleep2: {
     title: "Starlight Relaxation",
     emoji: "⭐",
     duration: "12 min",
     youtubeId: "CrgYEbIQkac",
+    bg: "bg-stars",
+    bgDesc: "✨ Starlit Sky • Dreamy & Serene",
   },
   focus1: {
     title: "Clear Mind",
     emoji: "🎯",
     duration: "10 min",
     youtubeId: "a8ATfWx4N0w",
+    bg: "bg-focus",
+    bgDesc: "💎 Crystal Clear • Sharp & Bright",
   },
   focus2: {
     title: "Deep Focus",
     emoji: "💡",
     duration: "20 min",
     youtubeId: "-2zdUXve6fQ",
+    bg: "bg-deepfocus",
+    bgDesc: "🔭 Deep Space • Intense Focus",
   },
 };
 
@@ -1237,6 +1253,10 @@ function playMeditation(el, id) {
   document.getElementById("playerEmoji").textContent = meditation.emoji;
   document.getElementById("playerTitle").textContent = meditation.title;
   document.getElementById("playerDuration").textContent = meditation.duration;
+  // Apply background theme
+  const bg = document.getElementById("meditationBg");
+  bg.className = `meditation-bg ${meditation.bg}`;
+  document.getElementById("playerDuration").textContent = meditation.bgDesc || meditation.duration;
 
   // Create YouTube iframe
   const iframe = document.createElement("iframe");
@@ -1290,7 +1310,7 @@ function togglePlayPause() {
   document.getElementById("playerEmoji").textContent = meditation.emoji;
   document.getElementById("playerTitle").textContent = meditation.title;
   document.getElementById("playerDuration").textContent = meditation.duration;
-
+ 
 function togglePlayPause() {
   const iframe = document.getElementById("meditationYTPlayer");
   if (!iframe) return;
