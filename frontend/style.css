@@ -2248,3 +2248,42 @@ textarea::placeholder {
 .bg-deepfocus {
   background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #4facfe 100%);
 }
+/* ── Premium Banner ── */
+.premium-banner {
+  background: linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,165,0,0.2) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.premium-banner:hover {
+  background: linear-gradient(135deg, rgba(255,215,0,0.3) 0%, rgba(255,165,0,0.3) 100%);
+}
+
+.premium-banner-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.premium-banner-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.premium-banner-text strong {
+  color: #ffd700;
+}
+
+.premium-banner-arrow {
+  color: #ffd700;
+  font-size: 20px;
+  flex-shrink: 0;
+}
