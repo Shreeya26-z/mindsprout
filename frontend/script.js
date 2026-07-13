@@ -1161,49 +1161,49 @@ const meditations = {
     title: "Breathing Basics",
     emoji: "🌬️",
     duration: "5 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    youtubeId: "8ln4XfRi6uw",
   },
   beginner2: {
     title: "Morning Calm",
     emoji: "🌿",
     duration: "7 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    youtubeId: "j734gLbQFbU",
   },
   stress1: {
     title: "Ocean Breath",
     emoji: "🌊",
     duration: "10 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    youtubeId: "yPebkk7xjF0",
   },
   stress2: {
     title: "Let It Go",
     emoji: "☁️",
     duration: "8 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+    youtubeId: "PYZIMn-xrDc",
   },
   sleep1: {
     title: "Deep Sleep Journey",
     emoji: "🌙",
     duration: "15 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+    youtubeId: "C4bofW53sO8",
   },
   sleep2: {
     title: "Starlight Relaxation",
     emoji: "⭐",
     duration: "12 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+    youtubeId: "CrgYEbIQkac",
   },
   focus1: {
     title: "Clear Mind",
     emoji: "🎯",
     duration: "10 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+    youtubeId: "a8ATfWx4N0w",
   },
   focus2: {
     title: "Deep Focus",
     emoji: "💡",
     duration: "20 min",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+    youtubeId: "-2zdUXve6fQ",
   },
 };
 
@@ -1221,11 +1221,61 @@ function playMeditation(el, id) {
   const meditation = meditations[id];
   if (!meditation) return;
 
-  // Stop current audio
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
+  // Remove existing iframe
+  const existing = document.getElementById("meditationYTPlayer");
+  if (existing) existing.remove();
+
+  // Reset all items
+  document.querySelectorAll(".meditation-play-btn").forEach(b => b.textContent = "▶");
+  document.querySelectorAll(".meditation-item").forEach(i => i.classList.remove("playing"));
+
+  currentMeditationId = id;
+
+  // Show player card
+  const playerCard = document.getElementById("playerCard");
+  playerCard.style.display = "block";
+  document.getElementById("playerEmoji").textContent = meditation.emoji;
+  document.getElementById("playerTitle").textContent = meditation.title;
+  document.getElementById("playerDuration").textContent = meditation.duration;
+
+  // Create YouTube iframe
+  const iframe = document.createElement("iframe");
+  iframe.id = "meditationYTPlayer";
+  iframe.src = `https://www.youtube.com/embed/${meditation.youtubeId}?autoplay=1&controls=0&mute=0`;
+  iframe.style.cssText = "position:absolute;opacity:0.01;width:1px;height:1px;";
+  iframe.allow = "autoplay; encrypted-media";
+  document.body.appendChild(iframe);
+
+  isPlaying = true;
+  document.getElementById("playPauseBtn").textContent = "⏸";
+  el.querySelector(".meditation-play-btn").textContent = "⏸";
+  el.classList.add("playing");
+
+  playerCard.scrollIntoView({ behavior: "smooth" });
+}
+
+function togglePlayPause() {
+  const iframe = document.getElementById("meditationYTPlayer");
+  if (!iframe) return;
+
+  if (isPlaying) {
+    iframe.src = iframe.src.replace("autoplay=1", "autoplay=0");
+    isPlaying = false;
+    document.getElementById("playPauseBtn").textContent = "▶";
+    if (currentMeditationId) {
+      const btn = document.getElementById(`btn-${currentMeditationId}`);
+      if (btn) btn.textContent = "▶";
+    }
+  } else {
+    iframe.src = iframe.src.replace("autoplay=0", "autoplay=1");
+    isPlaying = true;
+    document.getElementById("playPauseBtn").textContent = "⏸";
+    if (currentMeditationId) {
+      const btn = document.getElementById(`btn-${currentMeditationId}`);
+      if (btn) btn.textContent = "⏸";
+    }
   }
+}
 
   // Reset all play buttons
   document.querySelectorAll(".meditation-play-btn").forEach(b => b.textContent = "▶");
